@@ -493,4 +493,8 @@ $TCA['sys_file']['ctrl']['searchFields'] = 'uid,title,keywords';
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('sys_file', $columns, 1);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('sys_file', 'variants', '', 'after:type');
+
+// add categorization to all media types
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::makeCategorizable('media', 'sys_file', 'categories', array('fieldList' => 'categories', 'position' => 'after:keywords'));
+
 ?>
