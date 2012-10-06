@@ -444,4 +444,8 @@ $columns = array(
 
 t3lib_extMgm::addTCAcolumns('sys_file', $columns, 1);
 t3lib_extMgm::addToAllTCAtypes('sys_file', 'variants', '', 'after:type');
+
+// add categorization for all media types
+t3lib_extMgm::makeCategorizable('media', 'sys_file', 'categories', array('fieldList' => 'categories', 'position' => 'after:keywords'));
+
 ?>
