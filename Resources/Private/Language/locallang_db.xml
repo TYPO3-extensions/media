@@ -59,6 +59,7 @@
 
 			<label index="tx_media_file.name">Name</label>
 			
+			<label index="tabs.relations">Relations</label>
 			<label index="tabs.metrics">Metrics</label>
 			<label index="tabs.language">Language</label>
 			<label index="tabs.visibility">Visibility</label>
