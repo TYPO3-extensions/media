@@ -7,6 +7,9 @@ storage=1
 # cat=basic//1; type=string; label= Mime type allowed : List of mime type allowed to be uploaded. (@todo put this list in the installer?)
 mime_type_allowed = image/*,application/pdf
 
+# cat=basic//1; type=string; label= Comma-separated list of media folders. If not set, all folders of type Media will be taken, if there are no Media folder, a Media folder will be added automatically.
+media_folders=
+
 # cat=basic//1; type=boolean; label= Developer/Debug Functions: This activates special functions for development and debugging. This should stay deactivated for normal usage!
 debug = 0
 
