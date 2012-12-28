@@ -34,9 +34,9 @@
 									<ul class="dropdown-menu">
 										<f:for each="{columns}" as="column" iteration="iterator">
 											<li>
-												<f:if condition="{m:grid.column.isNotInternal(column: '{column}')}">
+												<f:if condition="{m:grid.column.isNotInternal(fieldName: '{column}')}">
 													<label class="checkbox inline">
-														<f:if condition="{m:grid.column.isVisible(column: '{column}')}">
+														<f:if condition="{m:grid.column.isVisible(fieldName: '{column}')}">
 															<f:then>
 																<input class="check-visible-toggle" type="checkbox" name=""
 																       value="{iterator.index}"

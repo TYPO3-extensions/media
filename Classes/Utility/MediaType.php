@@ -44,5 +44,35 @@ class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
 	const VIDEO = 4;
 
 	const SOFTWARE = 5;
+
+
+	/**
+	 * Get label for a media type
+	 *
+	 * @param int $mediaType
+	 * @return string
+	 */
+	static public function getLabel($mediaType) {
+		switch ($mediaType) {
+			case 1:
+				$result = 'text';
+				break;
+			case 2:
+				$result = 'image';
+				break;
+			case 3:
+				$result = 'audio';
+				break;
+			case 4:
+				$result = 'video';
+				break;
+			case 5:
+				$result = 'software';
+				break;
+			default:
+				$result = 'unknown';
+		}
+		return $result;
+	}
 }
 ?>

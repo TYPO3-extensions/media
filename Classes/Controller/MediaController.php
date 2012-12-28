@@ -55,7 +55,7 @@ class MediaController extends \TYPO3\CMS\Media\Controller\BaseController {
 	 * @return string The rendered view
 	 */
 	public function listAction() {
-		$this->view->assign('columns', \TYPO3\CMS\Media\Utility\Grid::getInstance()->getListOfColumns());
+		$this->view->assign('columns', \TYPO3\CMS\Media\Utility\TcaGrid::getInstance()->getFieldList());
 		$this->view->assign('medias', $this->mediaRepository->findAll());
 	}
 

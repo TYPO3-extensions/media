@@ -25,21 +25,33 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Media\Utility\Tca.
+ * Test case for class \TYPO3\CMS\Media\FormFactory\TextAreaFactory.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class TcaTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class TextAreaFactoryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Media\Utility\Tca
+	 * @var \TYPO3\CMS\Media\FormFactory\TextAreaFactory
 	 */
 	protected $fixture;
 
+	/**
+	 * @var string
+	 */
+	private $fakeName = '';
+
+	/**
+	 * @var string
+	 */
+	private $fakePrefix = '';
+
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Media\Utility\Tca();
+		$this->fixture = new \TYPO3\CMS\Media\FormFactory\TextAreaFactory();
+		$this->fakeName = uniqid('name');
+		$this->fakePrefix= uniqid('prefix');
 	}
 
 	public function tearDown() {
@@ -49,20 +61,22 @@ class TcaTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function columnsIncludesATitleColumn() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$actual = $this->fixture->getColumns();
-		$this->assertTrue(is_array($actual));
-		$this->assertArrayHasKey('title', $actual);
+	public function foo() {
+		$fieldName = 'title';
+		$actual = $this->fixture
+			->setFieldName($fieldName)
+			->setValue(uniqid('foo'))
+			->get();
+
+		$this->assertTrue($actual instanceof TYPO3\CMS\Media\Form\TextArea);
 	}
 
 	/**
 	 * @test
+	 * @expectedException TYPO3\CMS\Media\Exception\EmptyPropertyException
 	 */
-	public function fieldTypeReturnsInputForTitle() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$actual = $this->fixture->getFieldType('title');
-		$this->assertEquals('input', $actual);
+	public function ifFieldNameIsNotSetAnEmptyPropertyExceptionIsRaised() {
+		$this->fixture->get();
 	}
 }
 ?>

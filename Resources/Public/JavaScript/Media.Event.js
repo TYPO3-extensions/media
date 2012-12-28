@@ -13,8 +13,8 @@ Media.Event = {
 	 * Fetch the form and handle its action
 	 *
 	 * @private
-	 * @param {string} url
-	 * @param {string} key
+	 * @param {string} url where to send the form data
+	 * @param {string} key corresponds to an identifier for the flash message queue.
 	 * @return void
 	 */
 	getForm: function (url, key) {
@@ -26,8 +26,13 @@ Media.Event = {
 				//var content = $(data).find('form').html();
 
 				// @bug filter() only find the first element after tag body...
-				var content = $(data).filter('#form-media')
+				var content = $(data).filter('#form-media');
 				$('#container-bottom').html(content);
+
+
+				// Restore GUI.
+				var selectedTab = sessionStorage.getItem('media.selectedTab');
+				$('.nav-tabs li:eq(' + selectedTab + ') a').tab('show');
 
 				// bind submit handler to form
 				$('#form-media').on('submit', function (e) {

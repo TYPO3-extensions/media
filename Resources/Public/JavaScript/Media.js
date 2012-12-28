@@ -10,11 +10,14 @@ $(document).ready(function () {
 		e.preventDefault();
 	});
 
-	// Attach
+	// Attach saving action
 	$('.btn-save').click(function (e) {
 		$('#form-media').submit();
 		e.preventDefault();
 	});
+
+	// Binds form submission and fields to the validation engine
+	$("#form-media").validationEngine();
 
 	// Attach add action
 	Media.Event.add();

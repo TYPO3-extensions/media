@@ -31,7 +31,7 @@ namespace TYPO3\CMS\Media\Utility;
  * @package TYPO3
  * @subpackage media
  */
-class Grid implements \TYPO3\CMS\Core\SingletonInterface {
+class TcaGrid implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * @var array
@@ -41,17 +41,17 @@ class Grid implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \TYPO3\CMS\Media\Utility\Grid
+	 * @return \TYPO3\CMS\Media\Utility\TcaGrid
 	 */
 	static public function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Utility\Grid');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Utility\TcaGrid');
 	}
 
 	/**
 	 * __construct
 	 *
 	 * @throw \TYPO3\CMS\Media\Exception\MissingTcaConfigurationException
-	 * @return \TYPO3\CMS\Media\Utility\Grid
+	 * @return \TYPO3\CMS\Media\Utility\TcaGrid
 	 */
 	public function __construct() {
 
@@ -69,24 +69,23 @@ class Grid implements \TYPO3\CMS\Core\SingletonInterface {
 	 *
 	 * @return array
 	 */
-	public function getListOfColumns() {
+	public function getFieldList() {
 		return array_keys($this->tca['columns']);
 	}
 
 	/**
-	 * Get the translation of the column
+	 * Get the translation of a label given a column name
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return string
 	 */
-	public function getLabel($column) {
+	public function getLabel($fieldName) {
 		$result = '';
-		if ($this->hasLabel($column)) {
-			$configuration = $this->getColumn($column);
-			$result = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($configuration['label'], '');
-		} elseif (!empty($GLOBALS['TCA']['sys_file']['columns'][$column]['label'])) {
-			$label = $GLOBALS['TCA']['sys_file']['columns'][$column]['label'];
-			$result = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($label, 'media');
+		if ($this->hasLabel($fieldName)) {
+			$field = $this->getField($fieldName);
+			$result = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($field['label'], '');
+		} elseif (\TYPO3\CMS\Media\Utility\TcaField::getInstance()->hasLabel($fieldName)) {
+			$result = \TYPO3\CMS\Media\Utility\TcaField::getInstance()->getLabel($fieldName);
 		}
 		return $result;
 	}
@@ -94,32 +93,32 @@ class Grid implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Tell whether the column is internal or not
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return boolean
 	 */
-	public function isInternal($column) {
-		$configuration = $this->getColumn($column);
-		return empty($configuration['internal_type']) ? FALSE : $configuration['internal_type'];
+	public function isInternal($fieldName) {
+		$field = $this->getField($fieldName);
+		return empty($field['internal_type']) ? FALSE : $field['internal_type'];
 	}
 
 	/**
 	 * Tell whether the column is not internal
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return boolean
 	 */
-	public function isNotInternal($column) {
-		return !$this->isInternal($column);
+	public function isNotInternal($fieldName) {
+		return !$this->isInternal($fieldName);
 	}
 
 	/**
 	 * Returns an array containing the configuration of an column
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return array
 	 */
-	public function getColumn($column) {
-		return $this->tca['columns'][$column];
+	public function getField($fieldName) {
+		return $this->tca['columns'][$fieldName];
 	}
 
 	/**
@@ -127,65 +126,65 @@ class Grid implements \TYPO3\CMS\Core\SingletonInterface {
 	 *
 	 * @return array
 	 */
-	public function getColumns() {
+	public function getFields() {
 		return $this->tca['columns'];
 	}
 
 	/**
 	 * Returns whether the column is sortable or not
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return bool
 	 */
-	public function isSortable($column) {
-		$configuration = $this->getColumn($column);
-		return isset($configuration['sortable']) ? $configuration['sortable'] : TRUE;
+	public function isSortable($fieldName) {
+		$field = $this->getField($fieldName);
+		return isset($field['sortable']) ? $field['sortable'] : TRUE;
 	}
 
 	/**
 	 * Returns whether the column is sortable or not
 	 * @todo comment
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return bool
 	 */
-	public function hasRenderer($column) {
-		$configuration = $this->getColumn($column);
-		return empty($configuration['renderer']) ? FALSE : TRUE;
+	public function hasRenderer($fieldName) {
+		$field = $this->getField($fieldName);
+		return empty($field['renderer']) ? FALSE : TRUE;
 	}
 
 	/**
 	 * Returns whether the column is sortable or not
 	 *
 	 * @todo comment
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return string
 	 */
-	public function getRenderer($column) {
-		$configuration = $this->getColumn($column);
-		return empty($configuration['renderer']) ? '' : $configuration['renderer'];
+	public function getRenderer($fieldName) {
+		$field = $this->getField($fieldName);
+		return empty($field['renderer']) ? '' : $field['renderer'];
 	}
 
 	/**
 	 * Returns whether the column is sortable or not
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return bool
 	 */
-	public function isVisible($column) {
-		$configuration = $this->getColumn($column);
-		return isset($configuration['visible']) ? $configuration['visible'] : TRUE;
+	public function isVisible($fieldName) {
+		$field = $this->getField($fieldName);
+		return isset($field['visible']) ? $field['visible'] : TRUE;
 	}
 
 	/**
 	 * Returns whether the column has a label
 	 *
-	 * @param string $column the name of the column
+	 * @param string $fieldName the name of the column
 	 * @return bool
 	 */
-	public function hasLabel($column) {
-		$configuration = $this->getColumn($column);
-		return empty($configuration['label']) ? FALSE : TRUE;
+	public function hasLabel($fieldName) {
+		$field = $this->getField($fieldName);
+		return empty($field['label']) ? FALSE : TRUE;
 	}
 }
 ?>
