@@ -25,22 +25,18 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Media\Utility\Grid.
+ * Test case for class \TYPO3\CMS\Media\Tca\GridService.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
-
-	/**
-	 * @var \TYPO3\CMS\Media\Utility\Grid
-	 */
-	protected $fixture;
+class TcaGridServiceTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	public function setUp() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$this->fixture = new \TYPO3\CMS\Media\Utility\Grid();
+		$tableName = 'sys_file';
+		$serviceType = 'grid';
+		$this->fixture = new \TYPO3\CMS\Media\Tca\GridService($tableName, $serviceType);
 	}
 
 	public function tearDown() {
@@ -50,8 +46,15 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getListOfColumnsReturnsNotEmpty() {
-		$actual = $this->fixture->getListOfColumns();
+	public function getLabelReturnNameAsValue() {
+		$this->assertEquals('Preview', $this->fixture->getLabel('name'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getFieldListReturnsNotEmpty() {
+		$actual = $this->fixture->getFieldList();
 
 		$this->assertTrue(is_array($actual));
 		$this->assertNotEmpty($actual);
@@ -62,7 +65,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getColumnsReturnsNotEmpty() {
-		$actual = $this->fixture->getColumns();
+		$actual = $this->fixture->getFields();
 		$this->assertTrue(is_array($actual));
 		$this->assertNotEmpty($actual);
 	}
@@ -71,7 +74,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getConfigurationForColumnTitle() {
-		$actual = $this->fixture->getColumn('title');
+		$actual = $this->fixture->getField('title');
 		$this->assertTrue(is_array($actual));
 		$this->assertTrue(count($actual) > 0);
 	}
@@ -100,7 +103,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function labelOfColumnTstampShouldReturnsValueUpdated() {
+	public function labelOfColumnTstampShouldReturnsUpdatedAsValue() {
 		$this->assertEquals('Updated', $this->fixture->getLabel('tstamp'));
 	}
 
@@ -175,6 +178,5 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 		$expected = '';
 		$this->assertEquals($expected, $this->fixture->getRenderer(uniqid('foo')));
 	}
-
 }
 ?>

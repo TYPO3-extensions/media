@@ -4,7 +4,7 @@ namespace TYPO3\CMS\Media\Utility;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Lorenz Ulrich <lorenz.ulrich@visol.ch>
+ *  (c) 2012
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -25,7 +25,7 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class for Media folder utilities
+ * A class for handling general settings
  */
 class GeneralSettings {
 

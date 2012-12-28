@@ -20,20 +20,20 @@ unset($TCA['sys_file']['columns']['categories']['config']['wizards']['add']);
 unset($TCA['sys_file']['columns']['categories']['config']['wizards']['edit']);
 
 $newFileTypes = array(
-	'Text' => array('showitem' => 'storage, name, type, mime_type, sha1, size, l10n_parent, title, description, alternative, caption, keywords,
+	'text' => array('showitem' => 'storage, name, type, mime_type, sha1, size, title, description, alternative, caption, keywords,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xml:tabs.relations, categories,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.visibility, hidden, status, ranking,
-								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, sys_language_uid, l10n_diffsource, language,
+								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, language,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.metrics, color_space, --palette--;;10;;, --palette--;;14;;,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.copyright, creator, publisher, source,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.temporalInfo, content_creation_date, content_modification_date,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.file, download_name,
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 
-	'Image' => array('showitem' => 'storage, name, type, mime_type, sha1, size, file, l10n_parent, title, description, alternative, caption, keywords,
+	'image' => array('showitem' => 'storage, name, type, mime_type, sha1, size, title, description, alternative, caption, keywords,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xml:tabs.relations, categories,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.visibility, hidden, status, ranking,
-								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, sys_language_uid, l10n_diffsource,
+								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.metrics, color_space, --palette--;;10;;, --palette--;;14;;,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.copyright, creator, publisher, source,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.geolocation, location_country, location_region, location_city, latitude, longitude,
@@ -41,30 +41,30 @@ $newFileTypes = array(
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.file, download_name,
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 
-	'Audio' => array('showitem' => 'storage, name, type, mime_type, sha1, size, l10n_parent, title, description, alternative, caption, keywords,
+	'audio' => array('showitem' => 'storage, name, type, mime_type, sha1, size, title, description, alternative, caption, keywords,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xml:tabs.relations, categories,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.visibility, hidden, status, ranking,
-								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, sys_language_uid, l10n_diffsource, language,
+								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, language,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.metrics, duration, unit,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.copyright, creator, publisher, source,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.temporalInfo content_creation_date, content_modification_date,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.file, download_name,
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 
-	'Video' => array('showitem' => 'storage, name, type, mime_type, sha1, size, l10n_parent, title, description, alternative, caption, keywords,
+	'video' => array('showitem' => 'storage, name, type, mime_type, sha1, size, title, description, alternative, caption, keywords,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xml:tabs.relations, categories,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.visibility, hidden, status, ranking,
-								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, sys_language_uid, l10n_diffsource, language,
+								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, language,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.metrics, --palette--;;10;;, --palette--;;14;;,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.copyright, creator, publisher, source,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.temporalInfo, content_creation_date, content_modification_date,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.file, download_name,
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,starttime, endtime'),
 
-	'Software' => array('showitem' => 'storage, name, type, mime_type, sha1, size, l10n_parent, title, description, alternative, caption, keywords,
+	'software' => array('showitem' => 'storage, name, type, mime_type, sha1, size, title, description, alternative, caption, keywords,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xml:tabs.relations, categories,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.visibility, hidden, status, ranking,
-								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, sys_language_uid, l10n_diffsource, language,
+								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.language, language,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.metrics, --palette--;;10;;, --palette--;;14;;,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.copyright, creator, publisher, source,
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:tabs.temporalInfo content_creation_date, content_modification_date,
@@ -92,6 +92,44 @@ $columns = array(
 			'foreign_table' => 'sys_file_variants',
 			'foreign_selector' => 'role',
 			'foreign_field' => 'original'
+		)
+	),
+	'starttime' => Array(
+		'exclude' => 1,
+		'l10n_mode' => 'mergeIfNotBlank',
+		'label' => 'LLL:EXT:lang/locallang_general.php:LGL.starttime',
+		'config' => Array(
+			'type' => 'input',
+			'size' => '10',
+			'max' => '20',
+			'eval' => 'datetime',
+			'checkbox' => '0',
+			'default' => '0'
+		)
+	),
+	'endtime' => Array(
+		'exclude' => 1,
+		'l10n_mode' => 'mergeIfNotBlank',
+		'label' => 'LLL:EXT:lang/locallang_general.php:LGL.endtime',
+		'config' => Array(
+			'type' => 'input',
+			'size' => '8',
+			'max' => '20',
+			'eval' => 'datetime',
+			'checkbox' => '0',
+			'default' => '0',
+			'range' => Array(
+				'upper' => mktime(0, 0, 0, 12, 31, 2020),
+				'lower' => mktime(0, 0, 0, date('m') - 1, date('d'), date('Y'))
+			)
+		)
+	),
+	'hidden' => Array(
+		'exclude' => 1,
+		'label' => 'LLL:EXT:lang/locallang_general.php:LGL.hidden',
+		'config' => Array(
+			'type' => 'check',
+			'default' => '1'
 		)
 	),
 	'status' => array(

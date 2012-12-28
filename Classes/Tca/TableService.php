@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Media\Utility;
+namespace TYPO3\CMS\Media\Tca;
 
 /***************************************************************
  *  Copyright notice
@@ -25,13 +25,13 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class to handle TCA grid configuration
+ * A class to handle TCA ctrl.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tca implements \TYPO3\CMS\Core\SingletonInterface {
+class TableService implements \TYPO3\CMS\Media\Tca\ServiceInterface {
 
 	/**
 	 * @var array
@@ -39,31 +39,37 @@ class Tca implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $tca;
 
 	/**
-	 * Returns a class instance
-	 *
-	 * @return \TYPO3\CMS\Media\Utility\Tca
+	 * @var string
 	 */
-	static public function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Utility\Tca');
-	}
+	protected $tableName;
 
 	/**
 	 * __construct
 	 *
-	 * @return \TYPO3\CMS\Media\Utility\Tca
+	 * @throws \TYPO3\CMS\Media\Exception\InvalidKeyInArrayException
+	 * @param string $tableName
+	 * @return \TYPO3\CMS\Media\Tca\TableService
 	 */
-	public function __construct() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$this->tca = $GLOBALS['TCA']['sys_file'];
+	public function __construct($tableName) {
+		$this->tableName = $tableName;
+		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($this->tableName);
+		if (empty($GLOBALS['TCA'][$this->tableName])) {
+			throw new \TYPO3\CMS\Media\Exception\InvalidKeyInArrayException('No TCA existence for table name: ' . $this->tableName, 1356945106);
+		}
+		$this->tca = $GLOBALS['TCA'][$this->tableName]['ctrl'];
 	}
 
 	/**
-	 * Returns an array containing column names
+	 * Get the label name of table name.
 	 *
-	 * @return array
+	 * @return string
 	 */
-	public function getColumns() {
-		return $this->tca['columns'];
+	public function getLabel() {
+		$result = '';
+		if (! empty($this->tca['label'])) {
+			$result = $this->tca['label'];
+		}
+		return $result;
 	}
 
 	/**
@@ -72,29 +78,7 @@ class Tca implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return string
 	 */
 	public function getSearchableFields() {
-		return $this->tca['ctrl']['searchFields'];
-	}
-
-	/**
-	 * Returns the configuration for a $field
-	 *
-	 * @param string $field
-	 * @return array
-	 */
-	public function getFieldConfiguration($field) {
-		$columns = $this->getColumns();
-		return $columns[$field]['config'];
-	}
-
-	/**
-	 * Returns the configuration for a $field
-	 *
-	 * @param string $field
-	 * @return string
-	 */
-	public function getFieldType($field) {
-		$config = $this->getFieldConfiguration($field);
-		return $config['type'];
+		return $this->tca['searchFields'];
 	}
 }
 ?>

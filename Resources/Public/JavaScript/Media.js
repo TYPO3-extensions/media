@@ -10,11 +10,14 @@ $(document).ready(function () {
 		e.preventDefault();
 	});
 
-	// Attach
+	// Attach saving action
 	$('.btn-save').click(function (e) {
 		$('#form-media').submit();
 		e.preventDefault();
 	});
+
+	// Binds form submission and fields to the validation engine
+	$("#form-media").validationEngine();
 
 	// Attach add action
 	Media.Event.add();
@@ -69,6 +72,26 @@ $(document).ready(function () {
 		}
 	});
 
+	// Bind action when a tab is selected
+	// @todo check where to put that
+	$('.nav-tabs li a').bind('click', function(e) {
+		var selectedTab = $(this).parent();
+		var selectedIndex = $('.nav-tabs li').index(selectedTab);
+		sessionStorage.setItem('media.selectedTab', selectedIndex);
+	});
+
+	// Initialize default value
+	// @todo put that in a method or somewhere else e.g Media.Session.initialize
+	if (window.sessionStorage) {
+		if (sessionStorage.getItem('media.selectedTab') == null) {
+			sessionStorage.setItem('media.selectedTab', 0);
+		}
+	}
+
+	// In case the form is loaded
+	// @todo put that in a method or somewhere else
+	var selectedTab = sessionStorage.getItem('media.selectedTab');
+	$('.nav-tabs li:eq(' + selectedTab + ') a').tab('show');
 });
 
 

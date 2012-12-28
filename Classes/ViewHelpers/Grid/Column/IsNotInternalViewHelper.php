@@ -35,11 +35,11 @@ class IsNotInternalViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
 	/**
 	 * Returns whether the given column name is internal
 	 *
-	 * @param string $column the column Name
+	 * @param string $fieldName the column Name
 	 * @return boolean
 	 */
-	public function render($column) {
-		return \TYPO3\CMS\Media\Utility\Grid::getInstance()->isNotInternal($column);
+	public function render($fieldName) {
+		return \TYPO3\CMS\Media\Utility\TcaGrid::getInstance()->isNotInternal($fieldName);
 	}
 
 }
