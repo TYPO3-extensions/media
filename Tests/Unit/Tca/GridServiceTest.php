@@ -25,22 +25,23 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Media\Utility\Grid.
+ * Test case for class \TYPO3\CMS\Media\Tca\GridService.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class GridServiceTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Media\Utility\Grid
+	 * @var \TYPO3\CMS\Media\Tca\GridService
 	 */
-	protected $fixture;
+	private $fixture;
 
 	public function setUp() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$this->fixture = new \TYPO3\CMS\Media\Utility\Grid();
+		$tableName = 'sys_file';
+		$serviceType = 'grid';
+		$this->fixture = new \TYPO3\CMS\Media\Tca\GridService($tableName, $serviceType);
 	}
 
 	public function tearDown() {
@@ -50,8 +51,15 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getListOfColumnsReturnsNotEmpty() {
-		$actual = $this->fixture->getListOfColumns();
+	public function getLabelReturnNameAsValue() {
+		$this->assertEquals('Preview', $this->fixture->getLabel('name'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getFieldListReturnsNotEmpty() {
+		$actual = $this->fixture->getFieldList();
 
 		$this->assertTrue(is_array($actual));
 		$this->assertNotEmpty($actual);
@@ -62,7 +70,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getColumnsReturnsNotEmpty() {
-		$actual = $this->fixture->getColumns();
+		$actual = $this->fixture->getFields();
 		$this->assertTrue(is_array($actual));
 		$this->assertNotEmpty($actual);
 	}
@@ -71,7 +79,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getConfigurationForColumnTitle() {
-		$actual = $this->fixture->getColumn('title');
+		$actual = $this->fixture->getField('title');
 		$this->assertTrue(is_array($actual));
 		$this->assertTrue(count($actual) > 0);
 	}
@@ -80,14 +88,14 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function columnTitleIsNotInternal() {
-		$this->assertFalse($this->fixture->isInternal('title'));
+		$this->assertFalse($this->fixture->isSystem('title'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function columnNumberIsInternal() {
-		$this->assertTrue($this->fixture->isInternal('_number'));
+		$this->assertTrue($this->fixture->isSystem('__number'));
 	}
 
 	/**
@@ -100,7 +108,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function labelOfColumnTstampShouldReturnsValueUpdated() {
+	public function labelOfColumnTstampShouldReturnsUpdatedAsValue() {
 		$this->assertEquals('Updated', $this->fixture->getLabel('tstamp'));
 	}
 
@@ -129,7 +137,7 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function columnNumberShouldBeNotSortableByDefault() {
-		$this->assertFalse($this->fixture->isSortable('_buttons'));
+		$this->assertFalse($this->fixture->isSortable('__buttons'));
 	}
 
 	/**
@@ -174,6 +182,17 @@ class GridTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	public function getTheRendererOfColumnFoo() {
 		$expected = '';
 		$this->assertEquals($expected, $this->fixture->getRenderer(uniqid('foo')));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getFieldsAndCheckWhetherItsPositionReturnsTheCorrectFieldName() {
+		$fields = array_keys($this->fixture->getFields());
+		for ($index = 0; $index < count($fields); $index++) {
+			$actual = $this->fixture->getFieldNameByPosition($index);
+			$this->assertSame($fields[$index], $actual);
+		}
 	}
 
 }

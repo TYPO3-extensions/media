@@ -1,5 +1,6 @@
 <?php
-namespace TYPO3\CMS\Media\ViewHelpers\Grid\Column;
+namespace TYPO3\CMS\Media\FormFactory;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -22,26 +23,45 @@ namespace TYPO3\CMS\Media\ViewHelpers\Grid\Column;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+
 /**
- * Tells about the column type of a grid
+ * Text field object
  *
- * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  media
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class IsNotInternalViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class CheckboxFactory extends \TYPO3\CMS\Media\FormFactory\FieldFactory {
 
 	/**
-	 * Returns whether the given column name is internal
+	 * Get a text field object
 	 *
-	 * @param string $column the column Name
-	 * @return boolean
+	 * @throws \TYPO3\CMS\Media\Exception\EmptyPropertyException
+	 * @return \TYPO3\CMS\Media\Form\Checkbox
 	 */
-	public function render($column) {
-		return \TYPO3\CMS\Media\Utility\Grid::getInstance()->isNotInternal($column);
-	}
+	public function get() {
 
+		if (empty($this->fieldName)) {
+			throw new \TYPO3\CMS\Media\Exception\EmptyPropertyException('Missing value for property "fieldName".', 1356894537);
+		}
+
+		/** @var $fieldObject \TYPO3\CMS\Media\Form\Checkbox */
+		$fieldObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Form\Checkbox');
+
+		$additionalAttributes = array(
+			'class' => \TYPO3\CMS\Media\Utility\ClientValidation::getInstance()->get($this->fieldName),
+		);
+
+		$label = \TYPO3\CMS\Media\Utility\TcaField::getService()->getLabel($this->fieldName);
+
+		$fieldObject->setName($this->fieldName)
+			->setLabel($label)
+			->setValue($this->value)
+			->setPrefix($this->prefix)
+			->addAttribute($additionalAttributes);
+
+		return $fieldObject;
+	}
 }
 
 ?>

@@ -55,7 +55,8 @@ class MediaController extends \TYPO3\CMS\Media\Controller\BaseController {
 	 * @return string The rendered view
 	 */
 	public function listAction() {
-		$this->view->assign('columns', \TYPO3\CMS\Media\Utility\Grid::getInstance()->getListOfColumns());
+		$this->view->assign('mediaTypes', \TYPO3\CMS\Media\Utility\MediaType::getTypes());
+		$this->view->assign('columns', \TYPO3\CMS\Media\Tca\ServiceFactory::getGridService('sys_file')->getFieldList());
 		$this->view->assign('medias', $this->mediaRepository->findAll());
 	}
 
@@ -102,8 +103,19 @@ class MediaController extends \TYPO3\CMS\Media\Controller\BaseController {
 	 * @return void
 	 * @dontvalidate $media
 	 */
-	public function newAction($media = NULL) {
-		$this->view->assign('media', $media);
+	public function newAction(array $media = array()) {
+
+		// Makes sure a media type is set.
+		$media['type'] = empty($media['type']) ? 0 :
+			\TYPO3\CMS\Media\Utility\MediaType::toInteger((int) $media['type']);
+
+		/** @var $mediaFactory \TYPO3\CMS\Media\MediaFactory */
+		$mediaFactory = \TYPO3\CMS\Media\MediaFactory::getInstance();
+
+		/** @var $mediaObject \TYPO3\CMS\Media\Domain\Model\Media */
+		$mediaObject = $mediaFactory->createObject($media);
+		$mediaObject->setIndexIfNotIndexed(FALSE); // mandatory, otherwise FAL will try to index a non yet created object.
+		$this->view->assign('media', $mediaObject);
 	}
 
 	/**

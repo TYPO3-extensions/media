@@ -48,6 +48,7 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\Thumbnail\ThumbnailInterface
 	/**
 	 * Render a thumbnail of a media
 	 *
+	 * @throws \TYPO3\CMS\Media\Exception\MissingTcaConfigurationException
 	 * @return string
 	 */
 	public function create() {
@@ -105,7 +106,7 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\Thumbnail\ThumbnailInterface
 	}
 
 	/**
-	 * Tell whether to wrap the thumbnail or not
+	 * Tell whether to wrap the thumbnail or not with an anchor. This will make the thumbnail clickable.
 	 *
 	 * @return \TYPO3\CMS\Media\Service\Thumbnail
 	 */
@@ -133,7 +134,7 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\Thumbnail\ThumbnailInterface
 
 	/**
 	 * @param \TYPO3\CMS\Media\Domain\Model\Media $media
-	 * @return \TYPO3\CMS\Media\Service\Thumbnail\ThumbnailInterface
+	 * @return \TYPO3\CMS\Media\Service\Thumbnail
 	 */
 	public function setMedia($media) {
 		$this->media = $media;

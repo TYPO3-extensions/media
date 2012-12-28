@@ -43,14 +43,14 @@ interface ThumbnailInterface {
 	/**
 	 * Tell to wrap the thumbnail.
 	 *
-	 * @return \TYPO3\CMS\Media\Service\Thumbnail
+	 * @return \TYPO3\CMS\Media\Service\Thumbnail\ThumbnailInterface
 	 */
 	public function doWrap();
 
 	/**
 	 * Tell to *not* wrap the thumbnail.
 	 *
-	 * @return \TYPO3\CMS\Media\Service\Thumbnail
+	 * @return \TYPO3\CMS\Media\Service\Thumbnail\ThumbnailInterface
 	 */
 	public function doNotWrap();
 

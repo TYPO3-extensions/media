@@ -25,54 +25,36 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Media\Utility\GeneralSettings.
+ * Test case for class \TYPO3\CMS\Media\Renderer\Visibility.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class GeneralSettingsTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class VisibilityTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+
+	/**
+	 * @var \TYPO3\CMS\Media\Renderer\Visibility
+	 */
+	private $fixture;
 
 	public function setUp() {
+		$this->fixture = new \TYPO3\CMS\Media\Renderer\Visibility();
 	}
 
 	public function tearDown() {
+		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function getSettingsReturnEmptyArrayByDefault() {
-		$actual = \TYPO3\CMS\Media\Utility\GeneralSettings::getSettings();
-		$this->assertTrue(is_array($actual));
-		$this->assertTrue(empty($actual));
-	}
-
-	/**
-	 * @test
-	 */
-	public function thumbnailSizeSettingReturnsNotEmpty() {
-		$actual = \TYPO3\CMS\Media\Utility\GeneralSettings::get('thumbnail_size');
-		$this->assertTrue($actual > 1);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getFooValueReturnsEmpty() {
-		$expected = '';
-		$actual = \TYPO3\CMS\Media\Utility\GeneralSettings::get(uniqid('foo'));
-		$this->assertEquals($expected, $actual);
-	}
-
-	/**
-	 * @test
-	 */
-	public function configurationArrayNotEmptyAfterGetARandomValue() {
-		\TYPO3\CMS\Media\Utility\GeneralSettings::get(uniqid('foo'));
-
-		$actual = \TYPO3\CMS\Media\Utility\GeneralSettings::getSettings();
-		$this->assertTrue(count($actual) > 0);
+	public function renderWithVisibilityEqualsToOneReturnANotEmptyString() {
+		$media = new \TYPO3\CMS\Media\Domain\Model\Media();
+		$media->setIndexIfNotIndexed(FALSE);
+		$media->setProperty('hidden', 1);
+		$actual = $this->fixture->render($media);
+		$this->assertNotEmpty($actual);
 	}
 
 }

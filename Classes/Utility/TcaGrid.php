@@ -4,7 +4,7 @@ namespace TYPO3\CMS\Media\Utility;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Lorenz Ulrich <lorenz.ulrich@visol.ch>
+ *  (c) 2012
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -25,54 +25,26 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class for Media folder utilities
+ * A class to handle TCA grid configuration
+ *
+ * @author Fabien Udriot <fabien.udriot@typo3.org>
+ * @package TYPO3
+ * @subpackage media
  */
-class GeneralSettings {
+class TcaGrid {
 
 	/**
 	 * @var array
 	 */
-	static protected $settings = array();
+	protected $tca;
 
 	/**
-	 * @var array
-	 */
-	static protected $defaultSettings = array(
-		'thumbnail_size' => 100
-	);
-
-	/**
-	 * @var string
-	 */
-	static protected $extensionKey = 'media';
-
-	/**
-	 * Returns a configuration key
+	 * Returns a class instance
 	 *
-	 * @param string $key
-	 * @return array
+	 * @return \TYPO3\CMS\Media\Tca\GridService
 	 */
-	static public function get($key) {
-
-		if(empty(self::$settings)) {
-			$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::$extensionKey]);
-			self::$settings = \TYPO3\CMS\Core\Utility\GeneralUtility::array_merge(self::$defaultSettings, $settings);
-		}
-		return isset(self::$settings[$key]) ? self::$settings[$key] : '';
-	}
-
-	/**
-	 * @return array
-	 */
-	public static function getSettings() {
-		return self::$settings;
-	}
-
-	/**
-	 * @param array $settings
-	 */
-	public static function setSettings($settings) {
-		self::$settings = $settings;
+	static public function getService() {
+		return \TYPO3\CMS\Media\Tca\ServiceFactory::getGridService('sys_file');
 	}
 }
 ?>

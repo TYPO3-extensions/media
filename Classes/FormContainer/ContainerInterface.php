@@ -1,16 +1,16 @@
 <?php
+namespace TYPO3\CMS\Media\FormContainer;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Media development team <typo3-project-media@lists.typo3.org>
- *
+ *  (c) 2012
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
+ *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  The GNU General Public License can be found at
@@ -25,44 +25,18 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Media\Utility\Tca.
+ * A interface dealing with panel
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class TcaTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+interface ContainerInterface {
 
 	/**
-	 * @var \TYPO3\CMS\Media\Utility\Tca
+	 * @param \TYPO3\CMS\Media\Form\FormFieldInterface $element
+	 * @return \TYPO3\CMS\Media\Form\FormFieldInterface
 	 */
-	protected $fixture;
-
-	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Media\Utility\Tca();
-	}
-
-	public function tearDown() {
-		unset($this->fixture);
-	}
-
-	/**
-	 * @test
-	 */
-	public function columnsIncludesATitleColumn() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$actual = $this->fixture->getColumns();
-		$this->assertTrue(is_array($actual));
-		$this->assertArrayHasKey('title', $actual);
-	}
-
-	/**
-	 * @test
-	 */
-	public function fieldTypeReturnsInputForTitle() {
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('sys_file');
-		$actual = $this->fixture->getFieldType('title');
-		$this->assertEquals('input', $actual);
-	}
+	public function addItem(\TYPO3\CMS\Media\Form\FormFieldInterface $element);
 }
 ?>

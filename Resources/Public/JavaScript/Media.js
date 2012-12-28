@@ -4,39 +4,43 @@
 
 $(document).ready(function () {
 
-	// Attach closing action
-	$('.btn-close').click(function(e) {
-		Media.Panel.showList();
-		e.preventDefault();
-	});
-
-	// Attach
-	$('.btn-save').click(function (e) {
-		$('#form-media').submit();
-		e.preventDefault();
-	});
+	// Binds form submission and fields to the validation engine
+	$("#form-media").validationEngine();
 
 	// Attach add action
-	Media.Event.add();
+	Media.Action.add();
 
 	// Enable the hide / show column
 	$('.check-visible-toggle').click(function () {
 		var iCol = $(this).val();
 
 		/* Get the DataTables object again - this is not a recreation, just a get of the object */
-		var oTable = $('#example').dataTable();
+		var oTable = $('#media-list').dataTable();
 
 		var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 		oTable.fnSetColumnVis(iCol, bVis ? false : true);
 	});
 
+
+	$(document).keyup(function (e) {
+		// escape
+		var ESCAPE_KEY = 27
+		if (e.keyCode == ESCAPE_KEY) {
+
+			// True means the main panel is not currently displayed.
+			if ($('#navbar-sub > *').length > 0) {
+				Media.Panel.showList();
+			}
+		}
+	});
+
 	/**
-	 * Table initialisation
+	 * Table initialization
 	 *
 	 * Internal note: properties of Datatables have prefix: m, b, s, i, o, a, fn etc...
 	 * this corresponds to the variable type e.g. mixed, boolean, string, integer, object, array, function
 	 */
-	Media.Table = $('#example').dataTable({
+	Media.Table = $('#media-list').dataTable({
 		"bProcessing": true,
 		"bServerSide": true,
 		"sAjaxSource": "/typo3/mod.php",
@@ -61,14 +65,15 @@ $(document).ready(function () {
 //		},
 		"fnDrawCallback": function () {
 			// Attach event to DOM elements
-			Media.Event.edit();
-			Media.Event.delete();
+			Media.Action.edit();
+			Media.Action.delete();
 
 			// Handle flash message
 			Media.FlashMessage.display();
 		}
 	});
 
+	Media.Session.initialize();
 });
 
 

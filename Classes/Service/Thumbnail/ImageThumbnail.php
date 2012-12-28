@@ -39,7 +39,7 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 	 */
 	public function create() {
 
-		$thumbnailSize = \TYPO3\CMS\Media\Utility\GeneralSettings::get('thumbnail_size');
+		$thumbnailSize = \TYPO3\CMS\Media\Utility\GlobalConfiguration::get('thumbnail_size');
 
 		// @todo maxW is not taken into account...
 		$configuration = array(
