@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Media\Utility;
+namespace TYPO3\CMS\Media\Exception;
 
 /***************************************************************
  *  Copyright notice
@@ -25,54 +25,14 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class to handle media type
+ * Handle Exception for missing property
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
+class MissingPropertyException extends \Exception {
 
-	const UNKNOWN = 0;
-
-	const TEXT = 1;
-
-	const IMAGE = 2;
-
-	const AUDIO = 3;
-
-	const VIDEO = 4;
-
-	const SOFTWARE = 5;
-
-
-	/**
-	 * Get label for a media type
-	 *
-	 * @param int $mediaType
-	 * @return string
-	 */
-	static public function getLabel($mediaType) {
-		switch ($mediaType) {
-			case 1:
-				$result = 'text';
-				break;
-			case 2:
-				$result = 'image';
-				break;
-			case 3:
-				$result = 'audio';
-				break;
-			case 4:
-				$result = 'video';
-				break;
-			case 5:
-				$result = 'software';
-				break;
-			default:
-				$result = 'unknown';
-		}
-		return $result;
-	}
 }
+
 ?>

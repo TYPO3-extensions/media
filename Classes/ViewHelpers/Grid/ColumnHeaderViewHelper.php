@@ -42,11 +42,11 @@ class ColumnHeaderViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVi
 
 		$output = '';
 
-		foreach(\TYPO3\CMS\Media\Utility\Grid::getInstance()->getColumns() as $columnName => $configuration) {
+		foreach(\TYPO3\CMS\Media\Utility\TcaGrid::getInstance()->getFields() as $fieldName => $configuration) {
 			$output .= sprintf('Media._columns.push({ "mData": "%s", "bSortable": %s, "bVisible": %s });' . chr(10),
-				$columnName,
-				\TYPO3\CMS\Media\Utility\Grid::getInstance()->isSortable($columnName) ? 'true' : 'false',
-				\TYPO3\CMS\Media\Utility\Grid::getInstance()->isVisible($columnName) ? 'true' : 'false'
+				$fieldName,
+				\TYPO3\CMS\Media\Utility\TcaGrid::getInstance()->isSortable($fieldName) ? 'true' : 'false',
+				\TYPO3\CMS\Media\Utility\TcaGrid::getInstance()->isVisible($fieldName) ? 'true' : 'false'
 			);
 		}
 

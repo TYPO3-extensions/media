@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Media\Utility;
+namespace TYPO3\CMS\Media\Form;
 
 /***************************************************************
  *  Copyright notice
@@ -25,53 +25,48 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class to handle media type
+ * A class to render a text field
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
-
-	const UNKNOWN = 0;
-
-	const TEXT = 1;
-
-	const IMAGE = 2;
-
-	const AUDIO = 3;
-
-	const VIDEO = 4;
-
-	const SOFTWARE = 5;
-
+class TextField extends \TYPO3\CMS\Media\Form\AbstractField  {
 
 	/**
-	 * Get label for a media type
+	 * @return \TYPO3\CMS\Media\Form\TextField
+	 */
+	public function __construct() {
+		$this->template = <<<EOF
+
+<div class="control-group">
+	%s
+	<div class="controls">
+		<input id="%s" type="text" name="%s" value="%s" %s/>
+	</div>
+</div>
+EOF;
+	}
+
+	/**
+	 * Render a text field
 	 *
-	 * @param int $mediaType
+	 * @throws \TYPO3\CMS\Media\Exception\MissingPropertyException
 	 * @return string
 	 */
-	static public function getLabel($mediaType) {
-		switch ($mediaType) {
-			case 1:
-				$result = 'text';
-				break;
-			case 2:
-				$result = 'image';
-				break;
-			case 3:
-				$result = 'audio';
-				break;
-			case 4:
-				$result = 'video';
-				break;
-			case 5:
-				$result = 'software';
-				break;
-			default:
-				$result = 'unknown';
+	public function render() {
+
+		if (! $this->getName()) {
+			throw new \TYPO3\CMS\Media\Exception\MissingPropertyException('Missing or empty property "name" for text field', 1356217712);
 		}
+
+		$result = sprintf($this->template,
+			$this->renderLabel(),
+			$this->getId(),
+			$this->getName(),
+			$this->getValue(),
+			$this->renderAttributes()
+		);
 		return $result;
 	}
 }

@@ -1,16 +1,16 @@
 <?php
-namespace TYPO3\CMS\Media\Utility;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012
+ *  (c) 2012 Media development team <typo3-project-media@lists.typo3.org>
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
+ *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
  *  The GNU General Public License can be found at
@@ -25,54 +25,33 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class to handle media type
+ * Test case for class \TYPO3\CMS\Media\ViewHelpers\Form\TcaViewHelper.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
-
-	const UNKNOWN = 0;
-
-	const TEXT = 1;
-
-	const IMAGE = 2;
-
-	const AUDIO = 3;
-
-	const VIDEO = 4;
-
-	const SOFTWARE = 5;
-
+class TcaViewHelperTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
-	 * Get label for a media type
-	 *
-	 * @param int $mediaType
-	 * @return string
+	 * @var \TYPO3\CMS\Media\ViewHelpers\Form\TcaViewHelper
 	 */
-	static public function getLabel($mediaType) {
-		switch ($mediaType) {
-			case 1:
-				$result = 'text';
-				break;
-			case 2:
-				$result = 'image';
-				break;
-			case 3:
-				$result = 'audio';
-				break;
-			case 4:
-				$result = 'video';
-				break;
-			case 5:
-				$result = 'software';
-				break;
-			default:
-				$result = 'unknown';
-		}
-		return $result;
+	private $fixture;
+
+	public function setUp() {
+		$this->fixture = new \TYPO3\CMS\Media\ViewHelpers\Form\TcaViewHelper();
+	}
+
+	public function tearDown() {
+		unset($this->fixture);
+	}
+
+	/**
+	 * @test
+	 */
+	public function createAnEmptyMediaObjectAndTestWhetherItsTypeEqualsToStringMedia() {
+		$media = new \TYPO3\CMS\Media\Domain\Model\Media();
+		$this->assertEquals('media', $this->fixture->getObjectType($media));
 	}
 }
 ?>

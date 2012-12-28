@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Media\Utility;
+namespace TYPO3\CMS\Media\Panel;
 
 /***************************************************************
  *  Copyright notice
@@ -25,54 +25,59 @@ namespace TYPO3\CMS\Media\Utility;
  ***************************************************************/
 
 /**
- * A class to handle media type
+ * A class to render a tab panel
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
-
-	const UNKNOWN = 0;
-
-	const TEXT = 1;
-
-	const IMAGE = 2;
-
-	const AUDIO = 3;
-
-	const VIDEO = 4;
-
-	const SOFTWARE = 5;
-
+class Fieldset implements \TYPO3\CMS\Media\Panel\PanelInterface {
 
 	/**
-	 * Get label for a media type
-	 *
-	 * @param int $mediaType
+	 * @var string
+	 */
+	protected $title = '';
+
+	/**
+	 * @var string
+	 */
+	protected $template = '';
+
+	/**
+	 * @return
+	 */
+	public function __constructor() {
+		$this->template = <<<EOF
+
+<fieldset>
+	<legend>%s</legend>
+%s
+</fieldset>
+EOF;
+
+	}
+
+	/**
 	 * @return string
 	 */
-	static public function getLabel($mediaType) {
-		switch ($mediaType) {
-			case 1:
-				$result = 'text';
-				break;
-			case 2:
-				$result = 'image';
-				break;
-			case 3:
-				$result = 'audio';
-				break;
-			case 4:
-				$result = 'video';
-				break;
-			case 5:
-				$result = 'software';
-				break;
-			default:
-				$result = 'unknown';
-		}
-		return $result;
+	public function render() {
+		// TODO: Implement render() method.
+	}
+
+	/**
+	 * @param \TYPO3\CMS\Media\Form\FormInterface $element
+	 * @return \TYPO3\CMS\Media\Form\FormInterface
+	 */
+	public function addItem(\TYPO3\CMS\Media\Form\FormInterface $element) {
+		// TODO: Implement addItem() method.
+	}
+
+	/**
+	 * @param string $template
+	 * @return \TYPO3\CMS\Media\Form\FormInterface
+	 */
+	public function setTemplate($template) {
+		// TODO: Implement setTemplate() method.
 	}
 }
 ?>
