@@ -39,18 +39,18 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 	 */
 	public function create() {
 
-		$thumbnailSize = \TYPO3\CMS\Media\Utility\GeneralSettings::get('thumbnail_size');
+		$thumbnailSize = \TYPO3\CMS\Media\Utility\Configuration::get('thumbnail_size');
 
 		// @todo maxW is not taken into account...
 		$configuration = array(
 			'width' => $thumbnailSize, 'height' => $thumbnailSize,
 			'maxW' => $thumbnailSize, 'maxH' => $thumbnailSize
 		);
-		$processedFile = $this->media->process(\TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGEPREVIEW, $configuration);
+		$processedFile = $this->file->process(\TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGEPREVIEW, $configuration);
 
 		$thumbnail = sprintf('<img src="%s" hspace="2" title="%s" class="thumbnail" alt="" />',
 			$processedFile->getPublicUrl(TRUE),
-			htmlspecialchars($this->media->getName())
+			htmlspecialchars($this->file->getName())
 		);
 
 		if ($this->isWrapped()) {
@@ -69,10 +69,10 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 EOF;
 
 		return sprintf($template,
-			$this->media->getPublicUrl(TRUE),
+			$this->file->getPublicUrl(TRUE),
 			$thumbnail,
-			$this->media->getWidth(),
-			$this->media->getHeight()
+			$this->file->getProperty('width'),
+			$this->file->getProperty('height')
 		);
 	}
 
