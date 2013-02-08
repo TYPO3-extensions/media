@@ -81,11 +81,25 @@ class MediaTypeTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider typeProvider
 	 */
-	public function returnsImageWhenTwoAsNumericalStringIsGiven() {
-		$expected = 'image';
-		$actual = \TYPO3\CMS\Media\Utility\MediaType::toName('2');
+	public function returnsImageWhenTwoAsNumericalStringIsGiven($given, $expected) {
+		$actual = \TYPO3\CMS\Media\Utility\MediaType::toName($given);
 		$this->assertSame($expected, $actual);
+	}
+
+	/**
+	 * Provider
+	 */
+	public function typeProvider() {
+		return array(
+			array(0, 'unknown'),
+			array(1, 'text'),
+			array(2, 'image'),
+			array(3, 'audio'),
+			array(4, 'video'),
+			array(5, 'software'),
+		);
 	}
 
 	/**

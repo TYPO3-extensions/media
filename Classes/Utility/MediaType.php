@@ -33,17 +33,17 @@ namespace TYPO3\CMS\Media\Utility;
  */
 class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
 
-	const UNKNOWN = 0;
+	const UNKNOWN = 'unknown';
 
-	const TEXT = 1;
+	const TEXT = 'text';
 
-	const IMAGE = 2;
+	const IMAGE = 'image';
 
-	const AUDIO = 3;
+	const AUDIO = 'audio';
 
-	const VIDEO = 4;
+	const VIDEO = 'video';
 
-	const SOFTWARE = 5;
+	const SOFTWARE = 'software';
 
 	/**
 	 * Store a equivalence type integer => type name
@@ -51,11 +51,11 @@ class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var array
 	 */
 	static protected $values = array(
-		1 => 'text',
-		2 => 'image',
-		3 => 'audio',
-		4 => 'video',
-		5 => 'software',
+		\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => 'text',
+		\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => 'image',
+		\TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => 'audio',
+		\TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => 'video',
+		\TYPO3\CMS\Core\Resource\File::FILETYPE_SOFTWARE => 'software',
 	);
 
 	/**
@@ -68,7 +68,7 @@ class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
 
 		// just makes sure it can be converted
 		$mediaTypeConverted = (int) $mediaType;
-		if ($mediaType > 0) {
+		if ($mediaType >= 0) {
 			$mediaType = $mediaTypeConverted;
 		}
 
