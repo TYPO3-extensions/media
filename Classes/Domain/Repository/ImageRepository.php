@@ -33,5 +33,16 @@ namespace TYPO3\CMS\Media\Domain\Repository;
  */
 class ImageRepository extends \TYPO3\CMS\Media\Domain\Repository\MediaRepository {
 
+	/**
+	 * Returns all objects of this repository.
+	 * @todo unit test me!
+	 *
+	 * @return \TYPO3\CMS\Media\Domain\Model\Media[]
+	 */
+	public function findAll() {
+		return $this->findByType(\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
+	}
+
+	// @todo implement and test findByFoo method
 }
 ?>

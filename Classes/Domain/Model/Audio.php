@@ -31,68 +31,6 @@ namespace TYPO3\CMS\Media\Domain\Model;
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Media_Domain_Model_Audio extends \TYPO3\CMS\Core\Resource\File {
-
-	/**
-	 * Language
-	 *
-	 * @var string
-	 */
-	protected $language;
-
-	/**
-	 * Duration
-	 *
-	 * @var int
-	 */
-	protected $duration;
-
-	/**
-	 * __construct
-	 *
-	 * @return void
-	 */
-	public function __construct() {
-		//Do not remove the next line: It would break the functionality
-		$this->initStorageObjects();
-	}
-
-	/**
-	 * Returns the language
-	 *
-	 * @return string $language
-	 */
-	public function getLanguage() {
-		return $this->language;
-	}
-
-	/**
-	 * Sets the language
-	 *
-	 * @param string $language
-	 * @return void
-	 */
-	public function setLanguage($language) {
-		$this->language = $language;
-	}
-
-	/**
-	 * Returns the duration
-	 *
-	 * @return string $duration
-	 */
-	public function getDuration() {
-		return $this->duration;
-	}
-
-	/**
-	 * Sets the duration
-	 *
-	 * @param string $duration
-	 * @return void
-	 */
-	public function setDuration($duration) {
-		$this->duration = $duration;
-	}
+class Audio extends \TYPO3\CMS\Media\Domain\Model\Media {
 }
 ?>

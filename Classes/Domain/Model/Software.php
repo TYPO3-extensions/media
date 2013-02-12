@@ -31,16 +31,7 @@ namespace TYPO3\CMS\Media\Domain\Model;
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Media_Domain_Model_Software extends \TYPO3\CMS\Core\Resource\File {
+class Software extends \TYPO3\CMS\Media\Domain\Model\Media {
 
-	/**
-	 * __construct
-	 *
-	 * @return void
-	 */
-	public function __construct() {
-		//Do not remove the next line: It would break the functionality
-		$this->initStorageObjects();
-	}
 }
 ?>
