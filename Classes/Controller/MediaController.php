@@ -74,8 +74,8 @@ class MediaController extends \TYPO3\CMS\Media\Controller\BaseController {
 		$pagerObject = $this->createPagerObject();
 
 		// Query the repository
-		$medias = $this->mediaRepository->findAllByFilter($filterObject, $orderObject, $pagerObject->getOffset(), $pagerObject->getItemsPerPage());
-		$numberOfMedias = $this->mediaRepository->countAllByFilter($filterObject);
+		$medias = $this->mediaRepository->findFiltered($filterObject, $orderObject, $pagerObject->getOffset(), $pagerObject->getItemsPerPage());
+		$numberOfMedias = $this->mediaRepository->countFiltered($filterObject);
 		$pagerObject->setCount($numberOfMedias);
 
 		// Assign values

@@ -25,51 +25,51 @@ namespace TYPO3\CMS\Media\Domain\Repository;
  ***************************************************************/
 
 /**
- * Repository for accessing Text
+ * Repository for accessing software
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class TextRepository extends \TYPO3\CMS\Media\Domain\Repository\MediaRepository {
+class ApplicationRepository extends \TYPO3\CMS\Media\Domain\Repository\MediaRepository {
 
 	/**
 	 * @var string
 	 */
-	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Text';
+	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Application';
 
 	/**
-	 * Returns all Text of this repository.
+	 * Returns all Application of this repository.
 	 *
-	 * @return \TYPO3\CMS\Media\Domain\Model\Text[]
+	 * @return \TYPO3\CMS\Media\Domain\Model\Application[]
 	 */
 	public function findAll() {
 		$this->setObjectType($this->objectType);
-		return $this->findByType(\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT);
+		return $this->findByType(\TYPO3\CMS\Core\Resource\File::FILETYPE_SOFTWARE);
 	}
 
 	/**
-	 * Finds all Texts given a specified filter.
+	 * Finds all Applications given a specified filter.
 	 *
 	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
 	 * @param \TYPO3\CMS\Media\QueryElement\Order $order The order
 	 * @param int $offset
 	 * @param int $itemsPerPage
-	 * @return \TYPO3\CMS\Media\Domain\Model\Text[]
+	 * @return \TYPO3\CMS\Media\Domain\Model\Application[]
 	 */
 	public function findFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter, \TYPO3\CMS\Media\QueryElement\Order $order = NULL, $offset = NULL, $itemsPerPage = NULL) {
-		$filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT);
+		$filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_SOFTWARE);
 		return parent::findFiltered($filter, $order, $offset, $itemsPerPage);
 	}
 
 	/**
-	 * Count all Texts given a specified filter.
+	 * Count all Applications given a specified filter.
 	 *
 	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
 	 * @return int
 	 */
 	public function countFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
-		$filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT);
+		$filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_SOFTWARE);
 		return parent::countFiltered($filter);
 	}
 

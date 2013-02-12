@@ -25,16 +25,16 @@ namespace TYPO3\CMS\Media\Domain\Model;
  ***************************************************************/
 
 /**
- * Video representation in the file abstraction layer.
+ * Application representation in the file abstraction layer.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Video extends \TYPO3\CMS\Media\Domain\Model\Media {
+class Application extends \TYPO3\CMS\Media\Domain\Model\Media {
 
 	/**
-	 * Return a thumbnail corresponding to a Video
+	 * Return a thumbnail corresponding to an Application
 	 *
 	 * @param array $options
 	 * @return string

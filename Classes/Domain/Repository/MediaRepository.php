@@ -44,11 +44,29 @@ class MediaRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	protected $mediaFactory;
 
 	/**
+	 * Tell whether it is a raw result (array) or object being returned.
+	 *
+	 * @var bool
+	 */
+	protected $rawResult = FALSE;
+
+	/**
+	 * @var string
+	 */
+	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Media';
+
+	/**
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+	 */
+	protected $objectManager;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->databaseHandle = $GLOBALS['TYPO3_DB'];
 		$this->mediaFactory = \TYPO3\CMS\Media\MediaFactory::getInstance();
+		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 	}
 
 	/**
@@ -74,7 +92,7 @@ class MediaRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	}
 
 	/**
-	 * Add a new media in the repository
+	 * Add a new Media into the repository.
 	 *
 	 * @param array $media file information
 	 * @return int
@@ -97,81 +115,17 @@ class MediaRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	}
 
 	/**
-	 * Finds all references by the specified filter
-	 *
-	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
-	 * @param \TYPO3\CMS\Media\QueryElement\Order $order The order
-	 * @param int $offset
-	 * @param int $itemsPerPage
-	 * @return \TYPO3\CMS\Media\Domain\Model\Media[]
-	 */
-	public function findAllByFilter(\TYPO3\CMS\Media\QueryElement\Filter $filter, \TYPO3\CMS\Media\QueryElement\Order $order = NULL, $offset = NULL, $itemsPerPage = NULL) {
-
-		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
-
-		$query->setFilter($filter);
-		$query->setOrder($order);
-
-		if ($offset) {
-			$query->setOffset($offset);
-		}
-
-		if ($itemsPerPage) {
-			$query->setLimit($itemsPerPage);
-		}
-
-		$resource = $this->databaseHandle->sql_query($query->get());
-
-		$items = array();
-		while ($row = $this->databaseHandle->sql_fetch_assoc($resource)) {
-			$items[] = $this->mediaFactory->createObject($row);
-		}
-
-		return $items;
-	}
-
-	/**
-	 * Count all references by the specified filter
-	 *
-	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
-	 * @return int
-	 */
-	public function countAllByFilter(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
-
-		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
-		$query->setFilter($filter);
-
-		return $this->databaseHandle->exec_SELECTcountRows('uid', 'sys_file', $query->renderClause());
-	}
-
-	/**
 	 * Returns all objects of this repository.
 	 *
 	 * @return \TYPO3\CMS\Media\Domain\Model\Media[]
 	 */
 	public function findAll() {
-		$itemList = array();
-		$whereClause = 'deleted = 0';
-		if ($this->type != '') {
-			$whereClause .= ' AND ' . $this->typeField . ' = ' . $this->databaseHandle->fullQuoteStr($this->type, $this->table);
-		}
-		/** @var $res DB pointer */
-		$res = $this->databaseHandle->exec_SELECTquery('*', $this->table, $whereClause);
-		while ($row = $this->databaseHandle->sql_fetch_assoc($res)) {
-			try {
-				$itemList[] = $this->mediaFactory->createObject($row);
-			} catch(\Exception $exception) {
-				\TYPO3\CMS\Core\Utility\GeneralUtility::sysLog(
-					$exception->getMessage(),
-					'media',
-					\TYPO3\CMS\Core\Utility\GeneralUtility::SYSLOG_SEVERITY_WARNING
-				);
-			}
-		}
-		$this->databaseHandle->sql_free_result($res);
-		return $itemList;
+
+		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
+		return $query->setRawResult($this->rawResult)
+			->setObjectType($this->objectType)
+			->execute();
 	}
 
 	/**
@@ -183,14 +137,69 @@ class MediaRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	 * @return \TYPO3\CMS\Media\Domain\Model\Media The matching object
 	 */
 	public function findByUid($uid) {
-		if (!\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($uid)) {
-			throw new \InvalidArgumentException('uid has to be integer.', 1350652667);
+
+		/** @var $filter \TYPO3\CMS\Media\QueryElement\Filter */
+		$filter = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Filter');
+		$filter->addConstraint('uid', $uid);
+
+		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
+		$query = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Query');
+		$result = $query->setRawResult($this->rawResult)
+			->setObjectType($this->objectType)
+			->setFilter($filter)
+			->execute();
+
+		if (is_array($result)) {
+			$result = reset($result);
 		}
-		$row = $this->databaseHandle->exec_SELECTgetSingleRow('*', $this->table, 'uid=' . intval($uid) . ' AND deleted=0');
-		if (count($row) === 0) {
-			throw new \RuntimeException('Could not find row with uid "' . $uid . '" in table $this->table.', 1350652700);
+		return $result;
+	}
+
+	/**
+	 * Finds all Media given a specified filter.
+	 *
+	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
+	 * @param \TYPO3\CMS\Media\QueryElement\Order $order The order
+	 * @param int $offset
+	 * @param int $itemsPerPage
+	 * @return \TYPO3\CMS\Media\Domain\Model\Media[]
+	 */
+	public function findFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter, \TYPO3\CMS\Media\QueryElement\Order $order = NULL, $offset = NULL, $itemsPerPage = NULL) {
+
+		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
+
+		$query->setFilter($filter);
+
+		if ($order) {
+			$query->setOrder($order);
 		}
-		return $this->mediaFactory->createObject($row);
+
+		if ($offset) {
+			$query->setOffset($offset);
+		}
+
+		if ($itemsPerPage) {
+			$query->setLimit($itemsPerPage);
+		}
+
+		return $query
+			->setRawResult($this->rawResult)
+			->setObjectType($this->objectType)
+			->execute();
+	}
+
+	/**
+	 * Count all Media given a specified filter.
+	 *
+	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
+	 * @return int
+	 */
+	public function countFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
+
+		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
+		return $query->setFilter($filter)->count();
 	}
 
 	/**
@@ -203,6 +212,105 @@ class MediaRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 		$media->getStorage()->deleteFile($media);
 		return $this->databaseHandle->exec_UPDATEquery('sys_file', 'uid = ' . $media->getUid(), array('deleted' => 1));
 	}
+
+	/**
+	 * Dispatches magic methods (findBy[Property]())
+	 *
+	 * @param string $methodName The name of the magic method
+	 * @param string $arguments The arguments of the magic method
+	 * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException
+	 * @return mixed
+	 * @api
+	 */
+	public function __call($methodName, $arguments) {
+		if (substr($methodName, 0, 6) === 'findBy' && strlen($methodName) > 7) {
+			$propertyName = strtolower(substr(substr($methodName, 6), 0, 1)) . substr(substr($methodName, 6), 1);
+			$result = $this->processMagicCall($propertyName, $arguments[0]);
+		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
+			$propertyName = strtolower(substr(substr($methodName, 9), 0, 1)) . substr(substr($methodName, 9), 1);
+			$result = $this->processMagicCall($propertyName, $arguments[0], 'one');
+		} elseif (substr($methodName, 0, 7) === 'countBy' && strlen($methodName) > 8) {
+			$propertyName = strtolower(substr(substr($methodName, 7), 0, 1)) . substr(substr($methodName, 7), 1);
+			$result = $this->processMagicCall($propertyName, $arguments[0], 'count');
+		} else {
+			throw new \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException('The method "' . $methodName . '" is not supported by the repository.', 1360838010);
+		}
+		return $result;
+	}
+
+	/**
+	 * Handle the magic call by properly creating a Query object and returning its result.
+	 *
+	 * @param string $field
+	 * @param string $value
+	 * @param string $flag
+	 * @return array
+	 */
+	 protected function processMagicCall($field, $value, $flag = '') {
+
+		 /** @var $filter \TYPO3\CMS\Media\QueryElement\Filter */
+		 $filter = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Filter');
+		 $filter->addConstraint($field, $value);
+
+		 // Add check if the object type returned is different than Media.
+		 // @todo can be converted automatically with a Helper method
+		 if ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Text') {
+		    $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT);
+		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Image') {
+			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
+		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Audio') {
+			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO);
+		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Video') {
+			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO);
+		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Application') {
+			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_SOFTWARE);
+		 }
+
+		 /** @var $query \TYPO3\CMS\Media\QueryElement\Query */
+		 $query = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Query');
+		 $query->setRawResult($this->rawResult)
+			 ->setObjectType($this->objectType)
+			 ->setFilter($filter);
+
+		 if ($flag == 'count') {
+			 $result = $query->count();
+		 } else {
+			 $result = $query->execute();
+		 }
+
+		 return $flag == 'one' && !empty($result) ? reset($result) : $result;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getRawResult() {
+		return $this->rawResult;
+	}
+
+	/**
+	 * @param boolean $rawResult
+	 * @return \TYPO3\CMS\Media\Domain\Repository\MediaRepository
+	 */
+	public function setRawResult($rawResult) {
+		$this->rawResult = $rawResult;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getObjectType() {
+		return $this->objectType;
+	}
+
+	/**
+	 * @param string $objectType
+	 */
+	public function setObjectType($objectType) {
+		$this->objectType = $objectType;
+	}
+
 }
 
 ?>

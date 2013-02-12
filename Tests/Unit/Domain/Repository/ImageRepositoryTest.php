@@ -25,13 +25,13 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Media\Domain\Repository\MediaRepository.
+ * Test case for class \TYPO3\CMS\Media\Domain\Repository\ImageRepository.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class ImageRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var Tx_Phpunit_Framework
@@ -49,6 +49,11 @@ class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	private $lastInsertedIdentifier = '';
 
 	/**
+	 * @var string
+	 */
+	private $fakeTitle = '';
+
+	/**
 	 * @var int
 	 */
 	private $fakeStorage = 0;
@@ -64,18 +69,26 @@ class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	private $numberOfFakeRecords = 3;
 
 	/**
-	 * @var \TYPO3\CMS\Media\Domain\Repository\MediaRepository
+	 * @var int
+	 */
+	private $numberOfFakeImages = 4;
+
+	/**
+	 * @var \TYPO3\CMS\Media\Domain\Repository\ImageRepository
 	 */
 	private $fixture;
 
 	public function setUp() {
 		$this->testingFramework = new Tx_Phpunit_Framework('sys_file');
-		$this->fixture = new \TYPO3\CMS\Media\Domain\Repository\MediaRepository();
+		$this->fixture = new \TYPO3\CMS\Media\Domain\Repository\ImageRepository();
 
 		$this->fakeStorage = rand(100, 200);
 		$this->fakeFileType = rand(100, 200);
+		$this->fakeTitle = uniqid();
+
 		// Populate the database with records
 		$this->populateFileTable();
+		$this->populateFileTableWithImages();
 	}
 
 	public function tearDown() {
@@ -85,17 +98,9 @@ class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\CMS\Media\Exception\MissingUidException
 	 */
-	public function updateMediaReturnsException() {
-		$this->fixture->updateMedia(array());
-	}
-
-	/**
-	 * @test
-	 */
-	public function findAllReturnsGreaterOrEqualNumberOfRecordsAsNumberOfFakeRecords() {
-		$this->assertGreaterThanOrEqual($this->numberOfFakeRecords, count($this->fixture->findAll()));
+	public function findAllImageReturnsTheGreaterOrEqualThanNumberOfFakeImages() {
+		$this->assertGreaterThanOrEqual($this->numberOfFakeImages, count($this->fixture->findAll()));
 	}
 
 	/**
@@ -104,7 +109,7 @@ class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function findFilteredReturnsSameNumberOfRecordsAsNumberOfFakeRecords() {
 		$filter = new \TYPO3\CMS\Media\QueryElement\Filter();
 		$filter->addConstraint('tx_phpunit_is_dummy_record', '1');
-		$this->assertEquals($this->numberOfFakeRecords, count($this->fixture->findFiltered($filter)));
+		$this->assertEquals($this->numberOfFakeImages, count($this->fixture->findFiltered($filter)));
 	}
 
 	/**
@@ -113,36 +118,38 @@ class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function countFilteredReturnsSameNumberOfRecordsAsNumberOfFakeRecords() {
 		$filter = new \TYPO3\CMS\Media\QueryElement\Filter();
 		$filter->addConstraint('tx_phpunit_is_dummy_record', '1');
-		$this->assertEquals($this->numberOfFakeRecords, $this->fixture->countFiltered($filter));
+		$this->assertEquals($this->numberOfFakeImages, $this->fixture->countFiltered($filter));
 	}
 
 	/**
 	 * @test
 	 */
-	public function findByUidCanReturnTheLastInsertedMedia() {
+	public function findByUidCanReturnTheLastInsertedImage() {
 		$actual = $this->fixture->findByUid($this->lastInsertedUid);
-		$this->assertTrue($actual instanceof \TYPO3\CMS\Media\Domain\Model\Media);
+		$this->assertTrue($actual instanceof \TYPO3\CMS\Media\Domain\Model\Image);
 	}
 
 	/**
 	 * @test
 	 */
-	public function findByTypeReturnsTheSameNumberAsFakeRecords() {
-		$this->assertEquals($this->numberOfFakeRecords, count($this->fixture->findByType($this->fakeFileType)));
+	public function findByTitleReturnsTheSameNumberAsFakeImageRecords() {
+		$this->assertEquals($this->numberOfFakeImages, count($this->fixture->findByTitle($this->fakeTitle)));
 	}
 
 	/**
 	 * @test
 	 */
-	public function findOneByTypeReturnsOneRecord() {
-		$this->assertEquals(1, count($this->fixture->findOneByType($this->fakeFileType)));
+	public function findOneByTitleReturnsOneRecord() {
+		$actual = $this->fixture->findOneByTitle($this->fakeTitle);
+		$this->assertEquals(1, count($actual));
+		$this->assertTrue($actual instanceof \TYPO3\CMS\Media\Domain\Model\Image);
 	}
 
 	/**
 	 * @test
 	 */
 	public function countByTypeReturnsTheSameNumberAsFakeRecords() {
-		$this->assertEquals($this->numberOfFakeRecords, $this->fixture->countByType($this->fakeFileType));
+		$this->assertEquals($this->numberOfFakeImages, $this->fixture->countByTitle($this->fakeTitle));
 	}
 
 	/**
@@ -165,7 +172,26 @@ class MediaRepositoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 				array(
 					'identifier' => $this->lastInsertedIdentifier,
 					'type' => $this->fakeFileType,
-					'title' => uniqid(),
+					'title' => $this->fakeTitle,
+					'pid' => 0,
+				)
+			);
+		}
+	}
+
+	/**
+	 * Populate DB with default records
+	 */
+	private function populateFileTableWithImages() {
+
+		for ($index = 0; $index < $this->numberOfFakeImages; $index++) {
+			$this->lastInsertedIdentifier = uniqid();
+			$this->lastInsertedUid = $this->testingFramework->createRecord(
+				'sys_file',
+				array(
+					'identifier' => $this->lastInsertedIdentifier,
+					'type' => \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE,
+					'title' => $this->fakeTitle,
 					'pid' => 0,
 				)
 			);

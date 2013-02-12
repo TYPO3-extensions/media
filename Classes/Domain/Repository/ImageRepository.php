@@ -25,7 +25,7 @@ namespace TYPO3\CMS\Media\Domain\Repository;
  ***************************************************************/
 
 /**
- * Repository for accessing image
+ * Repository for accessing Image
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
@@ -33,5 +33,58 @@ namespace TYPO3\CMS\Media\Domain\Repository;
  */
 class ImageRepository extends \TYPO3\CMS\Media\Domain\Repository\MediaRepository {
 
+	/**
+	 * @var string
+	 */
+	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Image';
+
+	/**
+	 * Returns all Image of this repository.
+	 *
+	 * @return \TYPO3\CMS\Media\Domain\Model\Image[]
+	 */
+	public function findAll() {
+		$this->setObjectType($this->objectType);
+		return $this->findByType(\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
+	}
+
+	/**
+	 * Finds all Images given a specified filter.
+	 *
+	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
+	 * @param \TYPO3\CMS\Media\QueryElement\Order $order The order
+	 * @param int $offset
+	 * @param int $itemsPerPage
+	 * @return \TYPO3\CMS\Media\Domain\Model\Image[]
+	 */
+	public function findFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter, \TYPO3\CMS\Media\QueryElement\Order $order = NULL, $offset = NULL, $itemsPerPage = NULL) {
+		$filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
+		return parent::findFiltered($filter, $order, $offset, $itemsPerPage);
+	}
+
+	/**
+	 * Count all Images given a specified filter.
+	 *
+	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
+	 * @return int
+	 */
+	public function countFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
+		$filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
+		return parent::countFiltered($filter);
+	}
+
+	/**
+	 * Dispatches magic methods (findBy[Property]())
+	 *
+	 * @param string $methodName The name of the magic method
+	 * @param string $arguments The arguments of the magic method
+	 * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException
+	 * @return mixed
+	 * @api
+	 */
+	public function __call($methodName, $arguments) {
+		$this->setObjectType($this->objectType);
+		return parent::__call($methodName, $arguments);
+	}
 }
 ?>
