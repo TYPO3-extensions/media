@@ -108,8 +108,7 @@ class MediaController extends \TYPO3\CMS\Media\Controller\BaseController {
 	public function newAction(array $media = array()) {
 
 		// Makes sure a media type is set.
-		$media['type'] = empty($media['type']) ? 0 :
-			\TYPO3\CMS\Media\Utility\MediaType::toInteger($media['type']);
+		$media['type'] = empty($media['type']) ? 0 : (int) $media['type'];
 
 		/** @var $mediaFactory \TYPO3\CMS\Media\MediaFactory */
 		$mediaFactory = \TYPO3\CMS\Media\MediaFactory::getInstance();

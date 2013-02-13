@@ -114,14 +114,15 @@ class MediaType implements \TYPO3\CMS\Core\SingletonInterface {
 		);
 
 		$types = \TYPO3\CMS\Media\Tca\ServiceFactory::getFormService('sys_file')->getTypes();
+
 		foreach ($types as $type) {
-			if (in_array($type, $typeFilter)) {
+			if (in_array((int)$type, $typeFilter)) {
 				$mediaTypes[] = array(
 					'type' => $type,
 					'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('type_' . $type, 'media'),
 				);
 			}
-		}
+		}		
 		return $mediaTypes;
 	}
 }
