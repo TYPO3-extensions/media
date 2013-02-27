@@ -55,6 +55,16 @@ We are following the recommendation of the Iana_ entity available here_ for the 
 .. _here: http://www.iana.org/assignments/media-types
 
 
+RTE integration
+=================
+
+The extension is shipping two buttons that can be integrated in the RTE. The name of the button is ``linkmaker`` for creating link to document and ``imagemaker`` for inserting images in the RTE. Refer to the documentation of HtmlArea.
+
+::
+
+	# There are likely to be more buttons
+	toolbarOrder = bar, linkmaker, bar, imagemaker
+
 Mount point
 =================
 
