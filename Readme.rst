@@ -68,6 +68,15 @@ Refer to the documentation of extension HtmlArea for more insight. It could basi
 	# key where to define the visible buttons in the RTE
 	toolbarOrder = bar, linkmaker, bar, imagemaker, ...
 
+Thumbnail View Helper
+======================
+
+@todo better document me!
+
+::
+
+	<m:thumbnail object="{asset}" configuration="{width: 800, height: 800}"/>
+
 Mount point
 =================
 

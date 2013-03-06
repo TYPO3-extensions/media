@@ -39,20 +39,15 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 	 */
 	public function create() {
 
-		$thumbnailSize = \TYPO3\CMS\Media\Utility\Configuration::get('thumbnail_size');
-
-		// @todo maxW is not taken into account... why is the world so cruel?
-		$configuration = array(
-			'width' => $thumbnailSize, 'height' => $thumbnailSize,
-			'maxW' => $thumbnailSize, 'maxH' => $thumbnailSize
-		);
 		/** @var $processedFile \TYPO3\CMS\Core\Resource\ProcessedFile */
-		$processedFile = $this->file->process(\TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGEPREVIEW, $configuration);
+		$processedFile = $this->file->process(\TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGEPREVIEW, $this->getConfiguration());
 
-		$thumbnail = sprintf('<img src="%s?%s" hspace="2" title="%s" class="thumbnail" alt="" />',
+		$thumbnail = sprintf('<img src="%s?%s" title="%s" alt="%s" %s/>',
 			$processedFile->getPublicUrl(TRUE),
 			$processedFile->isUpdated() ? time() : $processedFile->getProperty('tstamp'),
-			htmlspecialchars($this->file->getName())
+			htmlspecialchars($this->file->getName()),
+			htmlspecialchars($this->file->getName()),
+			$this->renderAttributes()
 		);
 
 		if ($this->isWrapped()) {

@@ -34,16 +34,9 @@ class AssetController extends \TYPO3\CMS\Media\Controller\BaseController {
 
 	/**
 	 * @var \TYPO3\CMS\Media\Domain\Repository\AssetRepository
+	 * @inject
 	 */
 	protected $assetRepository;
-
-	/**
-	 * @param \TYPO3\CMS\Media\Domain\Repository\AssetRepository $assetRepository
-	 * @return void
-	 */
-	public function injectAssetRepository(\TYPO3\CMS\Media\Domain\Repository\AssetRepository $assetRepository) {
-		$this->assetRepository = $assetRepository;
-	}
 
 	/**
 	 * @throws \TYPO3\CMS\Media\Exception\StorageNotOnlineException
@@ -64,7 +57,6 @@ class AssetController extends \TYPO3\CMS\Media\Controller\BaseController {
 	 */
 	public function listAction() {
 		$this->view->assign('columns', \TYPO3\CMS\Media\Tca\ServiceFactory::getGridService('sys_file')->getFieldList());
-		$this->view->assign('assets', $this->assetRepository->findAll());
 	}
 
 	/**
@@ -164,12 +156,23 @@ class AssetController extends \TYPO3\CMS\Media\Controller\BaseController {
 	}
 
 	/**
-	 * Handle interface for creating a link in the RTE
+	 * Handle GUI for creating a link in the RTE.
 	 *
 	 * @param int $asset
 	 * @return void
 	 */
 	public function linkMakerAction($asset) {
+		$assetObject = $this->assetRepository->findByUid($asset);
+		$this->view->assign('asset', $assetObject);
+	}
+
+	/**
+	 * Handle GUI for inserting an image in the RTE.
+	 *
+	 * @param int $asset
+	 * @return void
+	 */
+	public function imageMakerAction($asset) {
 		$assetObject = $this->assetRepository->findByUid($asset);
 		$this->view->assign('asset', $assetObject);
 	}
@@ -307,7 +310,7 @@ class AssetController extends \TYPO3\CMS\Media\Controller\BaseController {
 					'success' => TRUE,
 					'uid' => $newFileObject->getUid(),
 					'name' => $newFileObject->getName(),
-					'thumbnail' => $thumbnailService->setFile($newFileObject)->create(),
+					'thumbnail' => $thumbnailService->setFile($newFileObject)->doWrap()->create(),
 					// @todo hardcoded for now...
 					'formAction' => 'mod.php?M=user_MediaM1&tx_media_user_mediam1[format]=json&tx_media_user_mediam1[action]=update&tx_media_user_mediam1[controller]=Asset'
 				);
