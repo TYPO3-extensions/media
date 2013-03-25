@@ -34,13 +34,20 @@ $(document).ready(function () {
 	 * Internal note: properties of Datatables have prefix: m, b, s, i, o, a, fn etc...
 	 * this corresponds to the variable type e.g. mixed, boolean, string, integer, object, array, function
 	 */
-	Media.Table = $('#media-list').dataTable({
+	var tableOptions = {
 		"bProcessing": true,
 		"bServerSide": true,
 		"sAjaxSource": "/typo3/mod.php",
+
+		/**
+		 * Add Ajax parameters from plug-ins
+		 *
+		 * @param {object} aoData dataTables settings object
+		 * @return void
+		 */
 		"fnServerParams": function (aoData) {
 
-			// Get the parameter from the main URL and re-inject them into the Ajax request
+			// Get the parameter related to filter from the URL and "re-inject" them into the Ajax request
 			var uri = new Uri(window.location.href);
 			for (var index = 0; index < uri.queryPairs.length; index++) {
 				var queryPair = uri.queryPairs[index];
@@ -62,6 +69,10 @@ $(document).ready(function () {
 			aoData.push({ "name": 'tx_media_user_mediam1[action]', "value": 'listRow' });
 			aoData.push({ "name": 'tx_media_user_mediam1[controller]', "value": 'Asset' });
 			aoData.push({ "name": 'tx_media_user_mediam1[format]', "value": 'json' });
+			aoData.push({ "name": 'M', "value": 'user_MediaM1' });
+
+			// save settings into the session
+			Media.Session.set('aoData', JSON.stringify(aoData));
 		},
 		"aoColumns": Media._columns,
 		"aLengthMenu": [
@@ -86,8 +97,28 @@ $(document).ready(function () {
 			// Handle flash message
 			Media.FlashMessage.showAll();
 		}
-	});
+	};
 
+	// Restore possible setting from Session.
+	if (Media.Session.has('aoData')) {
+
+		// Search term
+		tableOptions.oSearch = {
+			'sSearch': Media.Table.getSetting('sSearch')
+		};
+
+		// Page browser
+		tableOptions.iDisplayStart = Media.Table.getSetting('iDisplayStart');
+
+		// Number of items displayed
+		tableOptions.iDisplayLength = Media.Table.getSetting('iDisplayLength');
+		$('#media-list_length').val(tableOptions.iDisplayLength); // GUI reset value
+
+		// @todo order direction
+		// @todo set default order title?
+	}
+
+	Media.table = $('#media-list').dataTable(tableOptions);
 	Media.Session.initialize();
 });
 
