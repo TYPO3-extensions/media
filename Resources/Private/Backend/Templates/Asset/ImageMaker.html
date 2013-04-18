@@ -94,7 +94,7 @@
 
 				<div class="container-height"></div>
 				<div class="control-group">
-					<m:thumbnail object="{asset}"
+					<media:thumbnail object="{asset}"
 					             preset="image_medium"
 					             attributes="{class: 'file-variant'}"/>
 				</div>
@@ -117,7 +117,7 @@
 	<div class="footer">
 		<div class="container">
 			<p class="footer-container pull-right">
-				<m:form.footer object="{asset}"/>
+				<media:form.footer object="{asset}"/>
 			</p>
 		</div>
 	</div>
@@ -130,8 +130,8 @@
 			var originalFileUid = '{asset.uid}' - 0; // cast value to int
 			var originalImageWidth = '{asset.width}' - 0;
 			var originalImageHeight = '{asset.height}' - 0;
-			var maximalImageWidth = '{m:imageDimension(preset: "image_medium", dimension: "width")}' - 0;
-			var maximalImageHeight = '{m:imageDimension(preset: "image_medium", dimension: "height")}' - 0;
+			var maximalImageWidth = '{media:imageDimension(preset: "image_medium", dimension: "width")}' - 0;
+			var maximalImageHeight = '{media:imageDimension(preset: "image_medium", dimension: "height")}' - 0;
 			var variations = "{f:if(condition: variant, then: '{variant.variation}')}";
 			var variantUid = "{f:if(condition: variant, then: '{variant.variant.uid}')}" - 0;
 			var ratio = originalImageWidth / originalImageHeight;
@@ -313,4 +313,4 @@
 
 </f:section>
 </html>
-{namespace m=TYPO3\CMS\Media\ViewHelpers}
+{namespace media=TYPO3\CMS\Media\ViewHelpers}

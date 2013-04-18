@@ -140,10 +140,10 @@ As a first place, a thumbnail can be generated from the Asset object, like::
 If the default thumbnail is not "sufficient", a View Helper can be used enabling to configure the thumbnail to be generated::
 
 	# The minimum
-	<m:thumbnail object="{asset}"/>
+	<media:thumbnail object="{asset}"/>
 
 	# Pass more settings to the thumbnail to be rendered.
-	<m:thumbnail object="{asset}" configuration="{width: 800, height: 800}" attributes="{class: 'file-variant'}" wrap="true"/>
+	<media:thumbnail object="{asset}" configuration="{width: 800, height: 800}" attributes="{class: 'file-variant'}" wrap="true"/>
 
 	# Pass some preset as for the dimension. Values can be:
 	# - image_thumbnail => '100x100'  (where maximum width is 100 and maximum height is 100)
@@ -152,9 +152,9 @@ If the default thumbnail is not "sufficient", a View Helper can be used enabling
     # - image_medium => '760x760'
     # - image_large => '1200x1200'
     # - image_original => '1920x1920'
-	<m:thumbnail object="{asset}" preset="image_medium"/>
+	<media:thumbnail object="{asset}" preset="image_medium"/>
 
-	{namespace m=TYPO3\CMS\Media\ViewHelpers}
+	{namespace media=TYPO3\CMS\Media\ViewHelpers}
 
 File Upload API
 =================

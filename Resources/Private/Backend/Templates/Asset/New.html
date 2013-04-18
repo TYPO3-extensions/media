@@ -23,7 +23,7 @@
 				<f:form method="post" action="create" enctype="multipart/form-data"
 				        name="asset" object="{asset}" arguments="{format: 'json'}" id="form-media">
 
-					<m:form.tca object="{asset}"/>
+					<media:form.tca object="{asset}"/>
 					<f:form.hidden id="asset-uid" property="uid"/>
 					<div style="visibility: hidden">
 						<f:form.submit value="{f:translate(key: 'save')}"/>
@@ -48,4 +48,4 @@
 
 </f:section>
 </html>
-{namespace m=TYPO3\CMS\Media\ViewHelpers}
+{namespace media=TYPO3\CMS\Media\ViewHelpers}

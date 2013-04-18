@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"
       xmlns:f="http://typo3.org/ns/fluid/ViewHelpers"
-      xmlns:m="http://typo3.org/ns/media/ViewHelpers">
+      xmlns:media="http://typo3.org/ns/media/ViewHelpers">
 
 <f:layout name="Default"/>
 
@@ -18,7 +18,7 @@
 								<f:form method="post" action="create" enctype="multipart/form-data"
 								        name="asset" object="{asset}" arguments="{format: 'json'}" class="form-upload form-inline">
 
-									<m:form.fileUpload>
+									<media:form.fileUpload>
 										<script type="text/javascript">
 											// Callback action after file upload
 											if (responseJSON.uid) {
@@ -32,12 +32,12 @@
 												Media.FlashMessage.add(message, 'success');
 											}
 										</script>
-									</m:form.fileUpload>
+									</media:form.fileUpload>
 								</f:form>
 							</div>
 							<div class="span6 toolbar-left">
 
-								<f:if condition="{m:isAdmin()}">
+								<f:if condition="{media:isAdmin()}">
 									<f:link.action controller="Tool" class="btn btn-tool-bar">
 										<span class="icon-cog"></span>
 									</f:link.action>
@@ -51,9 +51,9 @@
 									<ul class="dropdown-menu">
 										<f:for each="{columns}" key="column" as="configuration" iteration="iterator">
 											<li>
-												<f:if condition="{m:grid.column.isNotSystem(fieldName: '{column}')}">
+												<f:if condition="{media:grid.column.isNotSystem(fieldName: '{column}')}">
 													<label class="checkbox inline">
-														<f:if condition="{m:grid.column.isVisible(fieldName: '{column}')}">
+														<f:if condition="{media:grid.column.isVisible(fieldName: '{column}')}">
 															<f:then>
 																<input class="check-visible-toggle" type="checkbox" name=""
 																       value="{iterator.index}"
@@ -64,7 +64,7 @@
 																       value="{iterator.index}"/>
 															</f:else>
 														</f:if>
-														<m:translate.column column="{column}"/>
+														<media:translate.column column="{column}"/>
 													</label>
 												</f:if>
 											</li>
@@ -101,7 +101,7 @@
 									<f:format.raw>{configuration.html}</f:format.raw>
 								</f:then>
 								<f:else>
-									<m:translate.column column="{column}"/>
+									<media:translate.column column="{column}"/>
 								</f:else>
 							</f:if>
 						</th>
@@ -125,7 +125,7 @@
 								<li>
 									<f:link.action action="massDelete" arguments="{format: 'json'}"
 									               class="mass-delete">
-										<m:sprite name="actions-edit-delete"/>
+										<media:sprite name="actions-edit-delete"/>
 										delete
 									</f:link.action>
 								</li>
@@ -136,13 +136,13 @@
 				</tfoot>
 			</table>
 
-			<f:if condition="{m:isRtePlugin(plugin: 'linkMaker')}">
+			<f:if condition="{media:isRtePlugin(plugin: 'linkMaker')}">
 				<f:link.action id="btn-linkMaker-current" action="linkMaker"
 				               class="btn btn-linkMaker" style="display: none">
 					{asset.uid}
 				</f:link.action>
 			</f:if>
-			<f:if condition="{m:isRtePlugin(plugin: 'imageMaker')}">
+			<f:if condition="{media:isRtePlugin(plugin: 'imageMaker')}">
 				<f:link.action id="btn-imageMaker-current" action="imageMaker"
 				               class="btn btn-imageMaker" style="display: none">
 					{asset.uid}
@@ -160,4 +160,4 @@
 
 </f:section>
 </html>
-{namespace m=TYPO3\CMS\Media\ViewHelpers}
+{namespace media=TYPO3\CMS\Media\ViewHelpers}
