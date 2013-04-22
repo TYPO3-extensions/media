@@ -116,7 +116,7 @@ EOF;
 
 		// Get the base prefix
 		$basePrefix = $this->getBasePrefix($this->getPrefix());
-		$filePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('media') . 'Resources/Private/Widget/FileUploadTceForms/FileUploadTceForms.js';
+		$filePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('media') . 'Resources/Private/Widget/FileUploadTceForms/FileUpload.js';
 
 		/** @var $maxUploadViewHelper \TYPO3\CMS\Media\ViewHelpers\MaxUploadSizeViewHelper */
 		$maxUploadViewHelper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\ViewHelpers\MaxUploadSizeViewHelper');
