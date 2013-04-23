@@ -8,6 +8,8 @@
  */
 Media.Action = {
 
+	currentScope: null,
+
 	/**
 	 * Bind add button in the nav bar.
 	 * @todo remove me in Media 1.1
@@ -120,33 +122,52 @@ Media.Action = {
 	 * @return void
 	 */
 	delete: function () {
+		$('.btn-delete')
+			.click(function () {
+				Media.Action.scope = this;
+			})
+			.clickover({
+				esc_close: true,
+				width: 200,
+				placement: 'left',
+				title: Media.translate('are-you-sure'),
+				content: "<div class='btn-toolbar'>" +
+					"<button data-dismiss='clickover' class='btn'>Cancel</button>" +
+					"<button class='btn btn-danger btn-delete-row'>Delete</button>" +
+					"</div>",
+				onShown: function () {
 
-		//bind the click handler script to the newly created elements held in the table
-		$('.btn-delete').bind('click', function (e) {
-			var row, title, message, url;
+					var element = this;
 
-			url = $(this).attr('href');
-			// compute media title
-			row = $(this).closest("tr").get(0);
-			title = $('.media-title', row).html();
-			message = Media.format("confirm-delete", $.trim(title));
 
-			bootbox.confirm(message, function (result) {
-				if (result) {
+					// bind click on "btn-delete-row"
+					$('.btn-delete-row').bind('click', function (e) {
+						var row, title, message, url;
 
-					// Send Ajax request to delete media
-					$.get(url,
-						function (data) {
-							// Reload data table
-							Media.table.fnDeleteRow(Media.table.fnGetPosition(row));
-							var message = Media.format('message-deleted', data.asset.title);
-							Media.FlashMessage.add(message, 'success');
-						}
-					);
+						$(this).addClass('disabled').text(Media.translate('deleting'));
+						url = $(Media.Action.scope).attr('href');
+
+						// compute media title
+						row = $(Media.Action.scope).closest("tr").get(0);
+						title = $('.media-title', row).html();
+						message = Media.format("confirm-delete", $.trim(title));
+
+						// Send Ajax request to delete media
+						$.get(url,
+							function (data) {
+
+								// Hide click-over box.
+								element.hide();
+
+								// Reload data table
+								Media.table.fnDeleteRow(Media.table.fnGetPosition(row));
+								var message = Media.format('message-deleted', data.asset.title);
+								Media.FlashMessage.add(message, 'success');
+							}
+						);
+					});
 				}
 			});
-			e.preventDefault();
-		});
 	},
 
 	/**
