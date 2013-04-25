@@ -4,7 +4,6 @@
 	      product-name="local lang db">
 		<header/>
 		<body>
-
 			<trans-unit id="tx_media">
 				<source>Media</source>
 			</trans-unit>
@@ -86,12 +85,6 @@
 			<trans-unit id="tx_media.duration">
 				<source>Duration</source>
 			</trans-unit>
-			<trans-unit id="tx_media.horizontal_resolution">
-				<source>Horizontal resolution</source>
-			</trans-unit>
-			<trans-unit id="tx_media.vertical_resolution">
-				<source>Vertical resolution</source>
-			</trans-unit>
 			<trans-unit id="tx_media.color_space">
 				<source>Color space</source>
 			</trans-unit>
@@ -151,31 +144,6 @@
 
 			<trans-unit id="tx_media_file.name">
 				<source>Name</source>
-			</trans-unit>
-
-			<trans-unit id="tabs.metrics">
-				<source>Metrics</source>
-			</trans-unit>
-			<trans-unit id="tabs.language">
-				<source>Language</source>
-			</trans-unit>
-			<trans-unit id="tabs.visibility">
-				<source>Visibility</source>
-			</trans-unit>
-			<trans-unit id="tabs.copyright">
-				<source>Copyright</source>
-			</trans-unit>
-			<trans-unit id="tabs.file">
-				<source>File</source>
-			</trans-unit>
-			<trans-unit id="tabs.variants">
-				<source>Variants</source>
-			</trans-unit>
-			<trans-unit id="tabs.temporalInfo">
-				<source>Temporal Info</source>
-			</trans-unit>
-			<trans-unit id="tabs.geolocation">
-				<source>Geolocation</source>
 			</trans-unit>
 
 			<trans-unit id="sys_file_variants">
