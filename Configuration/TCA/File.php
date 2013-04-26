@@ -12,6 +12,7 @@ $newFileTypes = array(
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:visibility;10;; ,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:publish-dates;20;; ,
+									fe_groups, be_groups,
 
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:metadata,
 									creator,--palette--;;30;; ,
@@ -28,6 +29,7 @@ $newFileTypes = array(
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:visibility;10;; ,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:publish-dates;20;; ,
+									fe_groups, be_groups,
 
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:metadata,
 									creator,--palette--;;30;; ,
@@ -43,6 +45,7 @@ $newFileTypes = array(
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:visibility;10;; ,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:publish-dates;20;; ,
+									fe_groups, be_groups,
 
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:metadata,
 									creator,--palette--;;30;; ,
@@ -60,6 +63,7 @@ $newFileTypes = array(
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:visibility;10;; ,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:publish-dates;20;; ,
+									fe_groups, be_groups,
 
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:metadata,
 									duration,
@@ -77,6 +81,7 @@ $newFileTypes = array(
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:visibility;10;; ,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:publish-dates;20;; ,
+									fe_groups, be_groups,
 
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:metadata,
 									duration,
@@ -93,6 +98,7 @@ $newFileTypes = array(
 								--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:visibility;10;; ,
 									--palette--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:publish-dates;20;; ,
+									fe_groups, be_groups,
 
 								--div--;LLL:EXT:media/Resources/Private/Language/locallang.xlf:metadata,
 									creator,--palette--;;30;; ,
@@ -521,6 +527,38 @@ $columns = array(
 			),
 			'default' => '',
 			'readOnly' => TRUE,
+		),
+	),
+	'fe_groups' => array(
+		'exclude' => 1,
+		'l10n_mode' => 'exclude',
+		'l10n_display' => 'defaultAsReadonly',
+		'label' => 'LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:sys_file.fe_groups',
+		'config' => array(
+			'type' => 'select',
+			'size' => 10,
+			'minitems' => 0,
+			'maxitems' => 9999,
+			'autoSizeMax' => 30,
+			'multiple' => 0,
+			'foreign_table' => 'fe_groups',
+			'MM' => 'sys_file_fegroups_mm',
+		),
+	),
+	'be_groups' => array(
+		'exclude' => 1,
+		'l10n_mode' => 'exclude',
+		'l10n_display' => 'defaultAsReadonly',
+		'label' => 'LLL:EXT:media/Resources/Private/Language/locallang_db.xlf:sys_file.be_groups',
+		'config' => array(
+			'type' => 'select',
+			'size' => 10,
+			'minitems' => 0,
+			'maxitems' => 9999,
+			'autoSizeMax' => 30,
+			'multiple' => 0,
+			'foreign_table' => 'be_groups',
+			'MM' => 'sys_file_begroups_mm',
 		),
 	),
 );
