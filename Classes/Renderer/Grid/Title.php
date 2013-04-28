@@ -24,7 +24,7 @@ namespace TYPO3\CMS\Media\Renderer\Grid;
  ***************************************************************/
 
 /**
- * Class rendering title for the Grid.
+ * Class rendering title and description for the Grid.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
@@ -39,11 +39,47 @@ class Title implements \TYPO3\CMS\Media\Renderer\RendererInterface {
 	 * @return string
 	 */
 	public function render(\TYPO3\CMS\Media\Domain\Model\Asset $asset = NULL) {
-		$template = '%s <br /><span class="text-light">%s</span>';
-		return sprintf($template,
-			$asset->getTitle(),
-			$asset->getDescription() // @todo shorten text if too long
-		);
+
+		$result = '';
+		$template = '<div>%s %s <br /><span class="text-light">%s</span></div>';
+
+		if ($asset->getTitle() || $asset->getDescription()) {
+
+			// Get a possible default icon
+			$defaultFlag = '';
+			$tsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getModTSconfig(0, 'mod.SHARED');
+			// fallback non sprite-configuration
+			if (($pos = strrpos($tsConfig['properties']['defaultLanguageFlag'], '.')) !== FALSE) {
+				$defaultFlag = substr($tsConfig['properties']['defaultLanguageFlag'], 0, $pos);
+			}
+
+			$result = sprintf($template,
+				\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('flags-' . $defaultFlag),
+				$asset->getTitle(),
+				$asset->getDescription() // @todo shorten text if too long
+			);
+		}
+
+		// Get the Language Uid checking whether to render flags
+		$languages = \TYPO3\CMS\Media\Utility\Language::getInstance()->getLanguages();
+		if (!empty($languages)) {
+
+			foreach ($languages as $language) {
+				$records = \TYPO3\CMS\Media\Utility\Overlays::getOverlayRecords('sys_file', array($asset->getUid()), $language['uid']);
+
+				if (!empty($records[$asset->getUid()][0])) {
+					$record = $records[$asset->getUid()][0];
+
+					$result .= sprintf($template,
+						\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('flags-' . $language['flag']),
+						$record['title'],
+						$record['description']
+					);
+				}
+			}
+		}
+
+		return $result;
 	}
 }
 ?>

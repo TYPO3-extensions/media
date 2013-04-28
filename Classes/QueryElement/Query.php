@@ -144,7 +144,7 @@ class Query {
 	 */
 	public function renderClause() {
 
-		$clause = 'deleted = 0 AND is_variant = 0';
+		$clause = 'deleted = 0 AND is_variant = 0 AND sys_language_uid = 0';
 
 		/** @var $user \TYPO3\CMS\Core\Authentication\BackendUserAuthentication */
 		$user = $GLOBALS['BE_USER'];
