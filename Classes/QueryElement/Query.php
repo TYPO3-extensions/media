@@ -144,7 +144,7 @@ class Query {
 	 */
 	public function renderClause() {
 
-		$clause = 'deleted = 0 AND is_variant = 0';
+		$clause = 'deleted = 0 AND is_variant = 0 AND sys_language_uid = 0';
 
 		/** @var $user \TYPO3\CMS\Core\Authentication\BackendUserAuthentication */
 		$user = $GLOBALS['BE_USER'];
@@ -310,11 +310,8 @@ EOF;
 				try {
 					$row = $this->objectFactory->createObject($row, $this->objectType);
 				} catch (\Exception $exception) {
-					\TYPO3\CMS\Core\Utility\GeneralUtility::sysLog(
-						$exception->getMessage(),
-						'media',
-						\TYPO3\CMS\Core\Utility\GeneralUtility::SYSLOG_SEVERITY_WARNING
-					);
+					$logger = \TYPO3\CMS\Media\Utility\Logger::getInstance($this);
+					$logger->warning($exception->getMessage());
 				}
 			}
 			$items[] = $row;

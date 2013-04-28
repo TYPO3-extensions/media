@@ -309,7 +309,7 @@ A grid is a list view of records typical of a Backend module. TCA was extended t
 			),
 			'name' => array(
 				'sortable' => FALSE,
-				'renderer' => 'TYPO3\CMS\Media\Renderer\Grid\Preview',
+				'renderer' => 'TYPO3\CMS\Media\Grid\Preview',
 				'label' => 'LLL:EXT:media/Resources/Private/Language/locallang.xlf:preview',
 				'wrap' => '<div class="center">|</div>',
 			),
