@@ -120,7 +120,46 @@ The button name references are ``linkmaker`` and ``imagemaker`` respectively whi
 Variants
 =================
 
-@todo add some words here...
+A Variant is, as its name indicates, a variation of a file to be used in a different context as its original. It actually better works for images. Variants can be automatically created upon uploading a file and can be inserted into the RTE, as instance. This setting should be activated in the Extension Manager and is quite handy for having standardized size of images across the website.
+
+In the object land, a Variant object make the join between the original file and the Variant file. Additionally, it also stores the variation. Consider a few examples.
+
+Use the Variant Service for creating a Variant out of a File::
+
+
+	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+	$objectManager;
+
+	/** @var \TYPO3\CMS\Media\Service\Variant $variantService */
+	$variantService = $objectManager->get('TYPO3\CMS\Media\Service\Variant');
+
+	$configuration = array(
+		'width' => 200, // corresponds to maxH, respectively maxW
+		'height' => 200,
+	);
+	$variantObject = $variantService->create($assetObject, $configuration);
+
+	print $variantObject->getOriginal()->getUid();
+	print $variantObject->getVariant()->getUid();
+	print $variantObject->getVariation();
+
+Retrieving all Variants from an Asset::
+
+	/** @var $asset \TYPO3\CMS\Media\Domain\Model\Asset */
+	$variants = $asset->getVariants();
+
+Retrieving one Variant object from the Variant Repository::
+
+	/** @var $variantRepository \TYPO3\CMS\Media\Domain\Repository\VariantRepository */
+	$variantRepository;
+
+	/** @var $fileObject \TYPO3\CMS\Core\Resource\File */
+	$fileObject;
+
+	$variantObject = $variantRepository->findOneByVariant($fileObject);
+
+	# Possible save of Variant object
+	$this->variantRepository->update($variantObject);
 
 Image Optimizer
 =================

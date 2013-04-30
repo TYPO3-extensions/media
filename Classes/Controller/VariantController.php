@@ -75,9 +75,8 @@ class VariantController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 				$fileName = is_object($fileObject) ? $fileObject->getName() : 'variant_' . $uploadedFileObject->getName();
 				$newFileObject = $targetFolderObject->addFile($uploadedFileObject->getFileWithAbsolutePath(), $fileName , $conflictMode);
 
-				// Update the tstamp - which is not updated by addFile()
 				$newFileObject->updateProperties(array(
-					'tstamp' => time(),
+					'tstamp' => time(), // Update the tstamp - which is not updated by addFile()
 					'pid' => \TYPO3\CMS\Media\Utility\MediaFolder::getDefaultPid(),
 					'is_variant' => 1,
 				));
@@ -86,10 +85,16 @@ class VariantController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 				$fileRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Resource\FileRepository');
 				$fileRepository->update($newFileObject);
 
-				// Persist the File Variant
+				// Reminder: Variant Object make the join between the original file and the Variant file.
+				// Additionally, it also stores the variation kind.
+
+				// Persist variation of the File.
+				// Case 1: the file exists and variation needs to be updated
+				// Case 2: new file!
 				if (is_object($fileObject)) {
+
 					/** @var $variantObject \TYPO3\CMS\Media\Domain\Model\Variant */
-					$variantObject = $this->variantRepository->findOneByVariant($fileObject->getUid());
+					$variantObject = $this->variantRepository->findOneByVariant($fileObject);
 					$variantObject->setVariation($variant['variation']);
 					$this->variantRepository->update($variantObject);
 				} else {

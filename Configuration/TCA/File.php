@@ -665,6 +665,12 @@ $TCA['sys_file']['grid'] = array(
 			'renderer' => 'TYPO3\CMS\Media\Grid\Usage',
 			'label' => 'LLL:EXT:media/Resources/Private/Language/locallang.xlf:usage',
 		),
+		'variant' => array(
+			'visible' => TRUE,
+			'sortable' => FALSE,
+			'renderer' => 'TYPO3\CMS\Media\Grid\Variant',
+			'label' => 'LLL:EXT:media/Resources/Private/Language/locallang.xlf:variant',
+		),
 		'permission' => array(
 			'visible' => FALSE,
 			'renderer' => 'TYPO3\CMS\Media\Grid\Permission',
