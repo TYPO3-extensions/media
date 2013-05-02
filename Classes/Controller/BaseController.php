@@ -38,23 +38,23 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	protected $frontendUser;
 
 	/**
-	 * Instantiate a filter object with possible value depending of the request
+	 * Instantiate a match object with possible value depending of the request
 	 *
-	 * @return \TYPO3\CMS\Media\QueryElement\Filter
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	protected function createFilterObject() {
+	protected function createMatchObject() {
 
-		/** @var $filter \TYPO3\CMS\Media\QueryElement\Filter */
-		$filter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Filter');
+		/** @var $match \TYPO3\CMS\Media\QueryElement\Match */
+		$match = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Match');
 
 		// Retrieve a possible search term from GP.
 		$searchTerm = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sSearch');
 		if (strlen($searchTerm) > 0) {
-			$filter->setSearchTerm($searchTerm);
-			$filter->addCategory($searchTerm);
+			$match->setSearchTerm($searchTerm);
+			$match->addCategory($searchTerm);
 		}
 
-		return $filter;
+		return $match;
 	}
 
 	/**
@@ -90,14 +90,12 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 		$pager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Pager');
 
 		// Set items per page
-		// DataTables plugin is not flexible enough - or makes it complicated - to encapsulate
-		// parameters like tx_media_pi[page]
+		// DataTables plugin is not flexible enough - or makes it complicated - to encapsulate parameters like tx_media_pi[page]
 		// $this->request->hasArgument('page')
-		$itemsPerPage = $this->settings['pageBrowser']['itemsPerPage'];
 		if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('iDisplayLength')) {
-			$itemsPerPage = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('iDisplayLength');
+			$limit = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('iDisplayLength');
+			$pager->setLimit($limit);
 		}
-		$pager->setItemsPerPage($itemsPerPage);
 
 		// Set offset
 		$offset = 0;
@@ -108,8 +106,8 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 
 		// set page
 		$page = 1;
-		if ($pager->getItemsPerPage() > 0) {
-			$page = round($pager->getOffset() / $pager->getItemsPerPage());
+		if ($pager->getLimit() > 0) {
+			$page = round($pager->getOffset() / $pager->getLimit());
 		}
 		$pager->setPage($page);
 

@@ -56,6 +56,16 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Asset';
 
 	/**
+	 * @var string
+	 */
+	protected $queryObjectClass = 'TYPO3\CMS\Media\QueryElement\Query';
+
+	/**
+	 * @var string
+	 */
+	protected $matchObjectClass = 'TYPO3\CMS\Media\QueryElement\Match';
+
+	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
 	 */
 	protected $objectManager;
@@ -132,7 +142,7 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	public function findAll() {
 
 		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($this->queryObjectClass);
 		return $query->setRawResult($this->rawResult)
 			->setObjectType($this->objectType)
 			->execute();
@@ -148,15 +158,15 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	 */
 	public function findByUid($uid) {
 
-		/** @var $filter \TYPO3\CMS\Media\QueryElement\Filter */
-		$filter = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Filter');
-		$filter->addConstraint('uid', $uid);
+		/** @var $match \TYPO3\CMS\Media\QueryElement\Match */
+		$match = $this->objectManager->get($this->matchObjectClass);
+		$match->addMatch('uid', $uid);
 
 		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		$query = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Query');
+		$query = $this->objectManager->get($this->queryObjectClass);
 		$result = $query->setRawResult($this->rawResult)
 			->setObjectType($this->objectType)
-			->setFilter($filter)
+			->setMatch($match)
 			->execute();
 
 		if (is_array($result)) {
@@ -166,20 +176,20 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	}
 
 	/**
-	 * Finds all Assets given a specified filter.
+	 * Finds all Assets given specified matches.
 	 *
-	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
+	 * @param \TYPO3\CMS\Media\QueryElement\Match $match
 	 * @param \TYPO3\CMS\Media\QueryElement\Order $order The order
+	 * @param int $limit
 	 * @param int $offset
-	 * @param int $itemsPerPage
 	 * @return \TYPO3\CMS\Media\Domain\Model\Asset[]
 	 */
-	public function findFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter, \TYPO3\CMS\Media\QueryElement\Order $order = NULL, $offset = NULL, $itemsPerPage = NULL) {
+	public function findBy(\TYPO3\CMS\Media\QueryElement\Match $match, \TYPO3\CMS\Media\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL) {
 
 		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($this->queryObjectClass);
 
-		$query->setFilter($filter);
+		$query->setMatch($match);
 
 		if ($order) {
 			$query->setOrder($order);
@@ -189,8 +199,8 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 			$query->setOffset($offset);
 		}
 
-		if ($itemsPerPage) {
-			$query->setLimit($itemsPerPage);
+		if ($limit) {
+			$query->setLimit($limit);
 		}
 
 		return $query
@@ -200,16 +210,16 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	}
 
 	/**
-	 * Count all Assets given a specified filter.
+	 * Count all Assets given specified matches.
 	 *
-	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter The filter the references must apply to
+	 * @param \TYPO3\CMS\Media\QueryElement\Match $match
 	 * @return int
 	 */
-	public function countFiltered(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
+	public function countBy(\TYPO3\CMS\Media\QueryElement\Match $match) {
 
 		/** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\QueryElement\Query');
-		return $query->setFilter($filter)->count();
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($this->queryObjectClass);
+		return $query->setMatch($match)->count();
 	}
 
 	/**
@@ -276,29 +286,29 @@ class AssetRepository extends \TYPO3\CMS\Core\Resource\FileRepository {
 	 */
 	 protected function processMagicCall($field, $value, $flag = '') {
 
-		 /** @var $filter \TYPO3\CMS\Media\QueryElement\Filter */
-		 $filter = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Filter');
-		 $filter->addConstraint($field, $value);
+		 /** @var $match \TYPO3\CMS\Media\QueryElement\Match */
+		 $match = $this->objectManager->get($this->matchObjectClass);
+		 $match->addMatch($field, $value);
 
 		 // Add check if the object type returned is different than Media.
 		 // @todo can be converted automatically with a Helper method
 		 if ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Text') {
-		    $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT);
+		    $match->addMatch('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT);
 		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Image') {
-			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
+			 $match->addMatch('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE);
 		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Audio') {
-			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO);
+			 $match->addMatch('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO);
 		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Video') {
-			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO);
+			 $match->addMatch('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO);
 		 } elseif ($this->objectType == 'TYPO3\CMS\Media\Domain\Model\Application') {
-			 $filter->addConstraint('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION);
+			 $match->addMatch('type', \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION);
 		 }
 
 		 /** @var $query \TYPO3\CMS\Media\QueryElement\Query */
-		 $query = $this->objectManager->get('TYPO3\CMS\Media\QueryElement\Query');
+		 $query = $this->objectManager->get($this->queryObjectClass);
 		 $query->setRawResult($this->rawResult)
 			 ->setObjectType($this->objectType)
-			 ->setFilter($filter);
+			 ->setMatch($match);
 
 		 if ($flag == 'count') {
 			 $result = $query->count();

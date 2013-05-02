@@ -46,9 +46,9 @@ class Query {
 	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Asset';
 
 	/**
-	 * @var \TYPO3\CMS\Media\QueryElement\Filter
+	 * @var \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	protected $filter;
+	protected $match;
 
 	/**
 	 * @var \TYPO3\CMS\Media\QueryElement\Order
@@ -99,11 +99,16 @@ class Query {
 	protected $respectStorage = TRUE;
 
 	/**
+	 * @var \TYPO3\CMS\Media\Tca\FieldService
+	 */
+	protected $tcaFieldService;
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->databaseHandle = $GLOBALS['TYPO3_DB'];
 		$this->objectFactory = \TYPO3\CMS\Media\ObjectFactory::getInstance();
+		$this->tcaFieldService = \TYPO3\CMS\Media\Utility\TcaField::getService();
 	}
 
 	/**
@@ -171,9 +176,9 @@ class Query {
 			$clause .= $GLOBALS['TSFE']->sys_page->enableFields($this->tableName);
 		}
 
-		if (! is_null($this->filter)) {
+		if (! is_null($this->match)) {
 			$clauseSearchTerm = $this->getClauseSearchTerm();
-			$clauseCategories = $this->getClauseCategories();
+			$clauseCategories = $this->getClauseMM();
 
 			if (strlen($clauseSearchTerm) > 0 && strlen($clauseCategories) > 0) {
 				$clause .= sprintf(' AND (%s OR %s)', $clauseSearchTerm, $clauseCategories);
@@ -194,46 +199,53 @@ class Query {
 	 *
 	 * @return string
 	 */
-	protected function getClauseCategories() {
+	protected function getClauseMM() {
 		$clause = '';
 
-		$categories = $this->filter->getCategories();
-		if (! empty($categories)) {
+		$matches = $this->match->getMatches();
+		foreach ($this->match->getMatches() as $field => $values) {
 
-			// First check if any category is of type string and try to retrieve a corresponding uid
-			$_categories = array();
-			foreach ($categories as $category) {
-				if (is_object($category) && method_exists($category, 'getUid')) {
-					$category = $category->getUid();
-				}
+			if ($this->tcaFieldService->hasRelationManyToMany($field)) {
 
-				// TRUE means this is a character chain given. So, try to be smart by checking if the string correspond to a category id.
-				if (!is_numeric($category)) {
-					$escapedCategory = $this->databaseHandle->escapeStrForLike($category, $this->tableName);
-					$records = $this->databaseHandle->exec_SELECTgetRows('uid', 'sys_category', sprintf('title LIKE "%%%s%%"', $escapedCategory));
-					if (! empty($records)) {
-						foreach ($records as $record) {
-							$_categories[] = $record['uid'];
-						}
+				$tca_configuration = $this->tcaFieldService->getConfiguration($field);
+
+				// First check if any it is of type string and try to retrieve a corresponding uid
+				$_items = array();
+				foreach ($values as $item) {
+					if (is_object($item) && method_exists($item, 'getUid')) {
+						$item = $item->getUid();
 					}
-				} else {
-					$_categories[] = $category;
+
+					// TRUE means this is a character chain given. So, try to be smart by checking if the string correspond to a uid in $tca_configuration['foreign_table'].
+					// @todo: for now we presume there is a title field in the foreign_table. This has to be dynamic some way, new field in TCA or use [ctr][searchFields]
+					if (!is_numeric($item)) {
+
+						$escapedValue = $this->databaseHandle->escapeStrForLike($item, $tca_configuration['foreign_table']);
+						$records = $this->databaseHandle->exec_SELECTgetRows('uid', $tca_configuration['foreign_table'], sprintf('title LIKE "%%%s%%"', $escapedValue));
+						if (!empty($records)) {
+							foreach ($records as $record) {
+								$_items[] = $record['uid'];
+							}
+						}
+					} else {
+						$_items[] = $item;
+					}
 				}
-			}
 
-			if (! empty($_categories)) {
+				if (! empty($_items)) {
 
-				$template = <<<EOF
-uid IN (
-	SELECT
-		uid_foreign
-	FROM
-		sys_category_record_mm
-	WHERE
-		tablenames = "sys_file" AND uid_local IN (%s))
+					$template = <<<EOF
+	uid IN (
+		SELECT
+			uid_foreign
+		FROM
+			%s
+		WHERE
+			tablenames = "sys_file" AND uid_local IN (%s))
 EOF;
-				// Add category search
-				$clause = sprintf($template, implode(',', $_categories));
+					// Add MM search
+					$clause .= sprintf($template, $tca_configuration['MM'], implode(',', $_items));
+				}
 			}
 		}
 		return $clause;
@@ -249,11 +261,13 @@ EOF;
 		// Add constraints to the request
 		// @todo Implement OR. For now only support AND. Take inspiration from logicalAnd and logicalOr.
 		// @todo Add matching method $query->matching($query->equals($propertyName, $value))
-		foreach ($this->filter->getConstraints() as $field => $value) {
-			$clause .= sprintf(' AND %s = "%s"',
-				$field,
-				$this->databaseHandle->escapeStrForLike($value, $this->tableName)
-			);
+		foreach ($this->match->getMatches() as $field => $value) {
+			if ($this->tcaFieldService->hasNoRelation($field)) {
+				$clause .= sprintf(' AND %s = "%s"',
+					$field,
+					$this->databaseHandle->escapeStrForLike($value, $this->tableName)
+				);
+			}
 		}
 		return $clause;
 	}
@@ -266,8 +280,8 @@ EOF;
 	protected function getClauseSearchTerm() {
 		$clause = '';
 
-		if ($this->filter->getSearchTerm()) {
-			$searchTerm = $this->databaseHandle->escapeStrForLike($this->filter->getSearchTerm(), $this->tableName);
+		if ($this->match->getSearchTerm()) {
+			$searchTerm = $this->databaseHandle->escapeStrForLike($this->match->getSearchTerm(), $this->tableName);
 			$searchParts = array();
 
 			$fields = explode(',', \TYPO3\CMS\Media\Utility\TcaTable::getService()->getSearchableFields());
@@ -341,18 +355,18 @@ EOF;
 	}
 
 	/**
-	 * @return \TYPO3\CMS\Media\QueryElement\Filter
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	public function getFilter() {
-		return $this->filter;
+	public function getMatch() {
+		return $this->match;
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter
+	 * @param \TYPO3\CMS\Media\QueryElement\Match $match
 	 * @return \TYPO3\CMS\Media\QueryElement\Query
 	 */
-	public function setFilter(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
-		$this->filter = $filter;
+	public function setMatch(\TYPO3\CMS\Media\QueryElement\Match $match) {
+		$this->match = $match;
 		return $this;
 	}
 
