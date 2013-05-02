@@ -25,88 +25,63 @@ namespace TYPO3\CMS\Media\QueryElement;
  ***************************************************************/
 
 /**
- * Filter class for conditions that will apply to a query
+ * Match class for conditions that will apply to a query.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Filter  {
+class Match {
 
 	/**
-	 * The filter search term.
-	 *
 	 * @var string
 	 */
 	protected $searchTerm = '';
-
-	/**
-	 * Categories to be used to filter
-	 *
-	 * @var array
-	 */
-	protected $categories = array();
 
 	/**
 	 * fields to filter with their values
 	 *
 	 * @var array
 	 */
-	protected $constraints = array();
+	protected $matches = array();
 
 	/**
-	 * Constructs a new Filter
-	 *
-	 * @param array $filters
+	 * @var \TYPO3\CMS\Media\Tca\FieldService
 	 */
-	public function __construct($filters = array()) {
-		$this->searchTerm = empty($filters['searchTerm']) ? '' : $filters['searchTerm'];
+	protected $tcaFieldService;
 
-		if (!empty($filters['constraints']) && is_array($filters['constraints'])) {
-			$this->constraints = $filters['constraints'];
-		}
-		if (!empty($filters['categories']) && is_array($filters['categories'])) {
-			$this->categories = $filters['categories'];
-		}
+	/**
+	 * Constructs a new Match
+	 *
+	 * @param array $matches must be an array($field => $value)
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
+	 */
+	public function __construct($matches = array()) {
+		$this->tcaService = \TYPO3\CMS\Media\Utility\TcaField::getService();
+		$this->matches = $matches;
 	}
 
 	/**
-	 * Returns categories to be used to filter.
-	 *
-	 * @return array
-	 */
-	public function getCategories() {
-		return $this->categories;
-	}
-
-	/**
-	 * Sets categories to be used to filter.
-	 *
-	 * @param array $categories The filter categories
-	 * @return void
-	 */
-	public function setCategories(array $categories) {
-		$this->categories = $categories;
-	}
-
-	/**
-	 * Add a category to be used to filter. It could be either an integer or a string. Try using integer in priority which is more performant.
-	 * Though, a string is also possible. It will firstly be converted to a possible uid.
+	 * Add a category to be used as match. It could be either an integer or a string. Try using integer in priority which is more efficient.
+	 * A string is also possible to be given. The Query object will attempt to find / convert to a category uid.
 	 *
 	 * @param int|string|object $category
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
 	public function addCategory($category) {
-		$this->categories[] = $category;
+		$this->addMatch('categories', $category);
+		return $this;
 	}
 
 	/**
 	 * Sets this filter searchTerm
 	 *
 	 * @param string $searchTerm The filter searchTerm
-	 * @return void
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
 	public function setSearchTerm($searchTerm) {
 		$this->searchTerm = $searchTerm;
+		return $this;
 	}
 
 	/**
@@ -121,16 +96,16 @@ class Filter  {
 	/**
 	 * @return array
 	 */
-	public function getConstraints() {
-		return $this->constraints;
+	public function getMatches() {
+		return $this->matches;
 	}
 
 	/**
-	 * @param array $constraints
-	 * @return \TYPO3\CMS\Media\QueryElement\Filter
+	 * @param array $matches
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	public function setConstraints($constraints) {
-		$this->constraints = $constraints;
+	public function setMatches($matches) {
+		$this->matches = $matches;
 		return $this;
 	}
 
@@ -139,11 +114,19 @@ class Filter  {
 	 *
 	 * @param string $field
 	 * @param string $value
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	public function addConstraint($field, $value) {
-		$this->constraints[$field] = $value;
+	public function addMatch($field, $value) {
+		if ($this->tcaService->hasRelationManyToMany($field)) {
+			if (empty($this->matches[$field])) {
+				$this->matches[$field] = array();
+			}
+			$this->matches[$field][] = $value;
+		} else {
+			$this->matches[$field] = $value;
+		}
+		return $this;
 	}
-
 }
 
 ?>

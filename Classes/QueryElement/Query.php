@@ -46,9 +46,9 @@ class Query {
 	protected $objectType = 'TYPO3\CMS\Media\Domain\Model\Asset';
 
 	/**
-	 * @var \TYPO3\CMS\Media\QueryElement\Filter
+	 * @var \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	protected $filter;
+	protected $match;
 
 	/**
 	 * @var \TYPO3\CMS\Media\QueryElement\Order
@@ -99,11 +99,16 @@ class Query {
 	protected $respectStorage = TRUE;
 
 	/**
+	 * @var \TYPO3\CMS\Media\Tca\FieldService
+	 */
+	protected $tcaFieldService;
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->databaseHandle = $GLOBALS['TYPO3_DB'];
 		$this->objectFactory = \TYPO3\CMS\Media\ObjectFactory::getInstance();
+		$this->tcaFieldService = \TYPO3\CMS\Media\Utility\TcaField::getService();
 	}
 
 	/**
@@ -171,7 +176,7 @@ class Query {
 			$clause .= $GLOBALS['TSFE']->sys_page->enableFields($this->tableName);
 		}
 
-		if (! is_null($this->filter)) {
+		if (! is_null($this->match)) {
 			$clauseSearchTerm = $this->getClauseSearchTerm();
 			$clauseCategories = $this->getClauseCategories();
 
@@ -197,12 +202,12 @@ class Query {
 	protected function getClauseCategories() {
 		$clause = '';
 
-		$categories = $this->filter->getCategories();
-		if (! empty($categories)) {
+		$matches = $this->match->getMatches();
+		if (! empty($matches['categories'])) {
 
 			// First check if any category is of type string and try to retrieve a corresponding uid
 			$_categories = array();
-			foreach ($categories as $category) {
+			foreach ($matches['categories'] as $category) {
 				if (is_object($category) && method_exists($category, 'getUid')) {
 					$category = $category->getUid();
 				}
@@ -249,11 +254,13 @@ EOF;
 		// Add constraints to the request
 		// @todo Implement OR. For now only support AND. Take inspiration from logicalAnd and logicalOr.
 		// @todo Add matching method $query->matching($query->equals($propertyName, $value))
-		foreach ($this->filter->getConstraints() as $field => $value) {
-			$clause .= sprintf(' AND %s = "%s"',
-				$field,
-				$this->databaseHandle->escapeStrForLike($value, $this->tableName)
-			);
+		foreach ($this->match->getMatches() as $field => $value) {
+			if ($this->tcaFieldService->hasNoRelation($field)) {
+				$clause .= sprintf(' AND %s = "%s"',
+					$field,
+					$this->databaseHandle->escapeStrForLike($value, $this->tableName)
+				);
+			}
 		}
 		return $clause;
 	}
@@ -266,8 +273,8 @@ EOF;
 	protected function getClauseSearchTerm() {
 		$clause = '';
 
-		if ($this->filter->getSearchTerm()) {
-			$searchTerm = $this->databaseHandle->escapeStrForLike($this->filter->getSearchTerm(), $this->tableName);
+		if ($this->match->getSearchTerm()) {
+			$searchTerm = $this->databaseHandle->escapeStrForLike($this->match->getSearchTerm(), $this->tableName);
 			$searchParts = array();
 
 			$fields = explode(',', \TYPO3\CMS\Media\Utility\TcaTable::getService()->getSearchableFields());
@@ -341,18 +348,18 @@ EOF;
 	}
 
 	/**
-	 * @return \TYPO3\CMS\Media\QueryElement\Filter
+	 * @return \TYPO3\CMS\Media\QueryElement\Match
 	 */
-	public function getFilter() {
-		return $this->filter;
+	public function getMatch() {
+		return $this->match;
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Media\QueryElement\Filter $filter
+	 * @param \TYPO3\CMS\Media\QueryElement\Match $match
 	 * @return \TYPO3\CMS\Media\QueryElement\Query
 	 */
-	public function setFilter(\TYPO3\CMS\Media\QueryElement\Filter $filter) {
-		$this->filter = $filter;
+	public function setMatch(\TYPO3\CMS\Media\QueryElement\Match $match) {
+		$this->match = $match;
 		return $this;
 	}
 
