@@ -278,12 +278,15 @@ Retrieving one Variant object from the Variant Repository::
 Permission management
 ======================
 
-Permissions management is about controlling access of an Asset by the User. Permission can be defined on each file under tab "Access" where to connect
-an Asset to a Backend and / or a Frontend group. It is important to notice, that permission control is not enabled by default which means all assets will be visible
-for everyone. There are a few things to activate:
+Permissions management is about controlling accessibility of assets. Permissions can be defined on each file under tab "Access" where to connect
+an Asset to a Backend and / or a Frontend group. Beware activating the setting in the Extension Manager revert the logic of file access. Out of the box, all files are accessible by everyone (allowed by default policy). When activating this option, only authorized users are able to access a resource (deny by default policy). Admin users still have access to all files. FE permission handling is provided by third party extension. Media provides integration with EXT:naw_securedl. In order to enable permission, a few things must be activated:
 
-* Backend: there is an setting that can be activated in the Extension Manager which influences the display of files within the BE module.
-* Frontend: Media **delegates file permission check to third party extensions**. However, Media provides integration with extension naw_securedl_. Once the extension is installed **and configured** all URL pointing to a PDF will be secured. There is a Hook in EXT:media/Classes/Hooks/NawSecuredl.php taking care of security check.
+
+* Backend: there is a flag to check in the Extension Manager in tab "security"
+* Frontend: Media **delegates file permission control to third party extensions**. Though, Media provides integration with extension naw_securedl_. Once the extension is installed **and configured** all URL pointing to a file will be rewritten. There is a Hook in EXT:media/Classes/Hooks/NawSecuredl.php taking care of checking file access.
+* Add htaccess file (if using Apache) to restrict direct delivery of a file by the web server.
+
+Current implementation is beta quality. Rough edges are to be expected.  Also, important to mention, it was tested with master version of EXT:naw_securedl https://github.com/TYPO3-Extensions/naw_securedl. It looks a patch is required to be applied http://forge.typo3.org/issues/48269.
 
 .. _naw_securedl: http://typo3.org/extensions/repository/view/naw_securedl
 

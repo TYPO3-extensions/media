@@ -268,7 +268,7 @@ EOF;
 			if ($this->tcaFieldService->hasNoRelation($field)) {
 				$clause .= sprintf(' AND %s = "%s"',
 					$field,
-					$this->databaseHandle->escapeStrForLike($value, $this->tableName)
+					addslashes($value)
 				);
 			}
 		}
