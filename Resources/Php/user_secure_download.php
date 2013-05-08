@@ -11,7 +11,7 @@ function user_secure_download($className, $pObj) {
 
 	// check is done only if the resource comes from Media
 	// @todo check the mount point handled by Media
-	if (preg_match('/fileadmin\/user_upload\/resources\//is', $pObj->file)) {
+	if (preg_match('/'.preg_quote($GLOBALS['TYPO3_CONF_VARS']['BE']['fileadminDir'], '/').'user_upload\/resources\//is', $pObj->file)) {
 
 		$fileName = str_replace(dirname($pObj->file) . '/', '', $pObj->file);
 
