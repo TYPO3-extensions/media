@@ -56,12 +56,16 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 			$taskType = \TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGECROPSCALEMASK;
 		}
 
+		// there is a bug in naw_securedl that makes it impossible to add a ?1234567890 to the image url
+		// so when naw_securedl don't add the timestamp in FE
+		$nawSecuredlLoadedFE = TYPO3_MODE == 'FE' && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('naw_securedl');
+
 		/** @var $processedFile \TYPO3\CMS\Core\Resource\ProcessedFile */
 		$processedFile = $this->file->process($taskType, $configuration);
 
-		$thumbnail = sprintf('<img src="%s?%s" title="%s" alt="%s" %s/>',
+		$thumbnail = sprintf('<img src="%s%s" title="%s" alt="%s" %s/>',
 			$processedFile->getPublicUrl(TRUE),
-			$processedFile->isUpdated() ? time() : $processedFile->getProperty('tstamp'),
+			$nawSecuredlLoadedFE ? '' : '?'.($processedFile->isUpdated() ? time() : $processedFile->getProperty('tstamp')),
 			htmlspecialchars($this->file->getName()),
 			htmlspecialchars($this->file->getName()),
 			$this->renderAttributes()

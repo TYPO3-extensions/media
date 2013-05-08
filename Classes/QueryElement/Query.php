@@ -468,6 +468,22 @@ EOF;
 		$this->ignoreEnableFields = $ignoreEnableFields;
 		return $this;
 	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getRespectStorage() {
+		return $this->respectStorage;
+	}
+
+	/**
+	 * @param boolean $respectStorage
+	 * @return \TYPO3\CMS\Media\QueryElement\Query
+	 */
+	public function setRespectStorage($respectStorage) {
+		$this->respectStorage = (bool) $respectStorage;
+		return $this;
+	}
 }
 
 ?>
