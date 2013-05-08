@@ -5,10 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 # Activate hook for secure download for Frontend. But only if EXT:naw_securedl is loaded
 if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('naw_securedl')) {
-	$mediaPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('media');
-	require_once($mediaPath . 'Resources/Private/Php/user_secure_download.php');
-
-	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/naw_securedl/class.tx_nawsecuredl_output.php']['preOutput'][] = 'user_secure_download';
+	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/naw_securedl/class.tx_nawsecuredl_output.php']['preOutput'][] = 'EXT:media/Classes/Hooks/NawSecuredl.php:TYPO3\CMS\Media\Hooks\NawSecuredl->preOutput';
 }
 
 # Configuration for RTE
