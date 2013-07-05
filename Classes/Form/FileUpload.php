@@ -109,7 +109,7 @@ EOF;
 			$thumbnailService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Service\Thumbnail');
 			$thumbnail = $thumbnailService
 				->setFile($this->fileObject)
-				->doWrap(TRUE)
+				->setOutputType(\TYPO3\CMS\Media\Service\ThumbnailInterface::OUTPUT_IMAGE_WRAPPED)
 				->create();
 		}
 		return $thumbnail;
