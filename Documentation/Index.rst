@@ -62,8 +62,7 @@ Please note that PHP setups with the suhosin patch installed will have a default
 Domain Model and Repository
 =============================
 
-We are following the recommendation_ of the Iana_for taking apart the media types. Model works as follows:
-
+We are following the recommendation_ of the Iana_for taking apart the media types. Model works as follows::
 
 	---------------------
 	|       File        |  -> Limited meta data handling (Model in Core)
@@ -156,7 +155,10 @@ If the default thumbnail is not "sufficient", a View Helper can be used enabling
 	<m:thumbnail object="{asset}"/>
 
 	# Pass more settings to the thumbnail to be rendered.
-	<m:thumbnail object="{asset}" configuration="{width: 800, height: 800}" attributes="{class: 'file-variant'}" wrap="true"/>
+	<m:thumbnail object="{asset}"
+		configuration="{width: 800, height: 800}"
+		attributes="{class: 'file-variant'}"
+		output="image"/>
 
 	# Required attributes:
 	# --------------------
@@ -168,7 +170,7 @@ If the default thumbnail is not "sufficient", a View Helper can be used enabling
 	#
 	# configuration= array()
 	# attributes = array()
-	# wrap = FALSE
+	# output = image (possible values: "uri", "image", "imageWrapped")
 	# preset = NULL
 
 	# Pass some preset as for the dimension. Values can be:

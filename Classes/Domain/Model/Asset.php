@@ -822,17 +822,11 @@ class Asset extends \TYPO3\CMS\Core\Resource\File {
 	 * @return string
 	 */
 	public function getThumbnail(\TYPO3\CMS\Media\Service\ThumbnailSpecification $thumbnailSpecification = NULL) {
-		/** @var $thumbnailService \TYPO3\CMS\Media\Service\Thumbnail */
-		$thumbnailService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Service\Thumbnail');
-		$thumbnailService->setFile($this);
 
-		// Add more rendering specification if given.
-		if (is_object($thumbnailSpecification)) {
-			$thumbnailService->setConfiguration($thumbnailSpecification->getConfiguration())
-				->setAttributes($thumbnailSpecification->getAttributes())
-				->doWrap($thumbnailSpecification->getWrap());
-		}
-		return $thumbnailService->create();
+		/** @var $thumbnailService \TYPO3\CMS\Media\Service\Thumbnail */
+		$thumbnailService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Service\Thumbnail', $thumbnailSpecification);
+		return $thumbnailService->setFile($this)
+			->create();
 	}
 
 	/**
@@ -844,13 +838,14 @@ class Asset extends \TYPO3\CMS\Core\Resource\File {
 	public function getThumbnailWrapped(\TYPO3\CMS\Media\Service\ThumbnailSpecification $thumbnailSpecification = NULL) {
 
 		/** @var $thumbnailService \TYPO3\CMS\Media\Service\Thumbnail */
-		$thumbnailService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Service\Thumbnail');
+		$thumbnailService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Service\Thumbnail', $thumbnailSpecification);
 		$thumbnailService->setFile($this)
-			->doWrap();
+			->setOutputType(\TYPO3\CMS\Media\Service\Thumbnail::OUTPUT_IMAGE_WRAPPED);
 
 		// Add more rendering specification if given.
 		if (is_object($thumbnailSpecification)) {
 			$thumbnailService->setConfiguration($thumbnailSpecification->getConfiguration())
+				->setConfigurationWrap($thumbnailSpecification->getConfigurationWrap())
 				->setAttributes($thumbnailSpecification->getAttributes());
 		}
 		return $thumbnailService->create();

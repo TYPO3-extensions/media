@@ -45,6 +45,7 @@ interface ThumbnailInterface {
 	 *
 	 * @param bool $wrap
 	 * @return \TYPO3\CMS\Media\Service\ThumbnailInterface
+	 * @deprecated will be removed in Media 1.2
 	 */
 	public function doWrap($wrap = TRUE);
 
@@ -52,6 +53,7 @@ interface ThumbnailInterface {
 	 * Tell whether the thumbnail is wrapped within an anchor tag.
 	 *
 	 * @return bool
+	 * @deprecated will be removed in Media 1.2
 	 */
 	public function isWrapped();
 
@@ -78,6 +80,23 @@ interface ThumbnailInterface {
 	public function setConfiguration($configuration);
 
 	/**
+	 * Return the configuration for the anchor file
+	 * which is wrapping the image tag.
+	 *
+	 * @return array
+	 */
+	public function getConfigurationWrap();
+
+	/**
+	 * Define all sort of configuration for the anchor file
+	 * which is wrapping the image tag.
+	 *
+	 * @param array $configurationWrap
+	 * @return \TYPO3\CMS\Media\Service\ThumbnailInterface
+	 */
+	public function setConfigurationWrap($configurationWrap);
+
+	/**
 	 * @return array
 	 */
 	public function getAttributes();
@@ -87,5 +106,16 @@ interface ThumbnailInterface {
 	 * @return \TYPO3\CMS\Media\Service\ThumbnailInterface
 	 */
 	public function setAttributes($attributes);
+
+	/**
+	 * @return string
+	 */
+	public function getOutputType();
+
+	/**
+	 * @param string $outputType
+	 * @return \TYPO3\CMS\Media\Service\ThumbnailInterface
+	 */
+	public function setOutputType($outputType);
 }
 ?>
