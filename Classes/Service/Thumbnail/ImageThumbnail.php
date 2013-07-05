@@ -30,7 +30,8 @@ namespace TYPO3\CMS\Media\Service\Thumbnail;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  */
-class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
+class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail
+	implements \TYPO3\CMS\Media\Service\ThumbnailRenderableInterface {
 
 	/**
 	 * Render a thumbnail of a media
@@ -38,6 +39,22 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 	 * @return string
 	 */
 	public function create() {
+		$steps = $this->getRenderingSteps();
+
+		$result = '';
+		while($step = array_shift($steps)) {
+			$result = $this->$step($result);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Render the URI of the thumbnail.
+	 *
+	 * @return string
+	 */
+	public function renderUri(){
 
 		// Makes sure the width and the height of the thumbnail is not bigger than the actual file
 		$configuration = $this->getConfiguration();
@@ -49,39 +66,39 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\Thumbnail {
 		}
 
 		$taskType = \TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGEPREVIEW;
-		/** @var $processedFile \TYPO3\CMS\Core\Resource\ProcessedFile */
-		$processedFile = $this->file->process($taskType, $configuration);
+		$this->processedFile = $this->file->process($taskType, $configuration);
 
-		$thumbnail = sprintf('<img src="%s?%s" title="%s" alt="%s" %s/>',
-			$processedFile->getPublicUrl(TRUE),
-			$processedFile->isUpdated() ? time() : $processedFile->getProperty('tstamp'),
+		return $this->processedFile->getPublicUrl(TRUE);
+	}
+
+	/**
+	 * Render the tag image which is the main one for a thumbnail.
+	 *
+	 * @param string $result
+	 * @return string
+	 */
+	public function renderTagImage($result) {
+		return sprintf('<img src="%s?%s" title="%s" alt="%s" %s/>',
+			$result,
+			$this->processedFile->isUpdated() ? time() : $this->processedFile->getProperty('tstamp'),
 			htmlspecialchars($this->file->getName()),
 			htmlspecialchars($this->file->getName()),
 			$this->renderAttributes()
 		);
-
-		if ($this->isWrapped()) {
-			$thumbnail = $this->wrap($thumbnail);
-		}
-		return $thumbnail;
 	}
 
 	/**
-	 * Get Wrap template
+	 * Render a wrapping anchor around the thumbnail.
 	 *
-	 * @param string $thumbnail
+	 * @param string $result
 	 * @return string
 	 */
-	public function wrap($thumbnail) {
-		$template = <<<EOF
-<a href="%s?%s" target="_blank">%s</a>
-EOF;
-		return sprintf($template,
+	public function renderTagAnchor($result) {
+		return sprintf('<a href="%s?%s" target="_blank">%s</a>',
 			$this->file->getPublicUrl(TRUE),
 			$this->file->getProperty('tstamp'),
-			$thumbnail
+			$result
 		);
 	}
-
 }
 ?>

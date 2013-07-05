@@ -34,9 +34,19 @@ namespace TYPO3\CMS\Media\Service;
 class ThumbnailSpecification {
 
 	/**
+	 * Configure the output of the thumbnail service. Default output is of type "image".
+	 * Check possible output type in constants of thumbnail service
+	 * \TYPO3\CMS\Media\Service\ThumbnailInterface::OUTPUT_*
+	 *
+	 * @var string
+	 */
+	protected $outputType = Thumbnail::OUTPUT_IMAGE;
+
+	/**
 	 * Whether the thumbnail should be wrapped with an anchor.
 	 *
 	 * @var bool
+	 * @deprecated will be removed in Media 1.2
 	 */
 	protected $wrap = FALSE;
 
@@ -59,6 +69,7 @@ class ThumbnailSpecification {
 
 	/**
 	 * @return boolean
+	 * @deprecated will be removed in Media 1.2
 	 */
 	public function getWrap() {
 		return $this->wrap;
@@ -67,6 +78,7 @@ class ThumbnailSpecification {
 	/**
 	 * @param boolean $wrap
 	 * @return \TYPO3\CMS\Media\Service\ThumbnailSpecification
+	 * @deprecated will be removed in Media 1.2
 	 */
 	public function setWrap($wrap) {
 		$this->wrap = $wrap;
@@ -102,6 +114,22 @@ class ThumbnailSpecification {
 	 */
 	public function setAttributes($attributes) {
 		$this->attributes = $attributes;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOutputType() {
+		return $this->outputType;
+	}
+
+	/**
+	 * @param string $outputType
+	 * @return \TYPO3\CMS\Media\Service\ThumbnailSpecification
+	 */
+	public function setOutputType($outputType) {
+		$this->outputType = $outputType;
 		return $this;
 	}
 }

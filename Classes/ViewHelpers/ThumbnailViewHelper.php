@@ -38,11 +38,12 @@ class ThumbnailViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
 	 * @param object $object
 	 * @param array $configuration
 	 * @param array $attributes DOM attributes to add to the thumbnail image
-	 * @param boolean $wrap whether the thumbnail should be wrapped with an anchor tag.
+	 * @param boolean $wrap whether the thumbnail should be wrapped with an anchor tag. (OBSOLETE WILL BE REMOVED IN MEDIA 1.2!)
 	 * @param string $preset an image dimension preset
+	 * @param string $outputType an image dimension preset. Can be: uri, image, imageWrapped
 	 * @return string
 	 */
-	public function render($object, $configuration = array(), $attributes = array(), $wrap = FALSE, $preset = NULL) {
+	public function render($object, $configuration = array(), $attributes = array(), $wrap = FALSE, $preset = NULL, $outputType = NULL) {
 
 		/** @var $object \TYPO3\CMS\Media\Domain\Model\Asset */
 		if ($preset) {
@@ -51,11 +52,16 @@ class ThumbnailViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
 			$configuration['height'] = $imageDimension->getHeight();
 		}
 
+		// @todo remove me as of Media 1.2
+		if ($wrap) {
+			$outputType = \TYPO3\CMS\Media\Service\Thumbnail::OUTPUT_IMAGE_WRAPPED;
+		}
+
 		/** @var $thumbnailSpecification \TYPO3\CMS\Media\Service\ThumbnailSpecification */
 		$thumbnailSpecification = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Service\ThumbnailSpecification');
 		$thumbnailSpecification->setConfiguration($configuration)
 			->setAttributes($attributes)
-			->setWrap($wrap);
+			->setOutputType($outputType);
 
 		return $object->getThumbnail($thumbnailSpecification);
 	}

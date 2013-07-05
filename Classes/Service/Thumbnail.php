@@ -34,16 +34,65 @@ namespace TYPO3\CMS\Media\Service;
 class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 
 	/**
+	 * The thumbnail of the asset (default value)
+	 */
+	const OUTPUT_IMAGE = 'image';
+
+	/**
+	 * The thumbnail will be wrapped with an anchor.
+	 */
+	const OUTPUT_IMAGE_WRAPPED = 'imageWrapped';
+
+	/**
+	 * Output the URI of the thumbnail
+	 */
+	const OUTPUT_URI = 'uri';
+
+	/**
+	 * @var array
+	 */
+	protected $allowedOutputTypes = array(
+		self::OUTPUT_IMAGE,
+		self::OUTPUT_IMAGE_WRAPPED,
+		self::OUTPUT_URI,
+	);
+
+	/**
+	 * Configure the output of the thumbnail service. Default output is:
+	 * \TYPO3\CMS\Media\Service\ThumbnailInterface::OUTPUT_IMAGE
+	 *
+	 * @var string
+	 */
+	protected $outputType = self::OUTPUT_IMAGE;
+
+	/**
+	 * Define what are the rendering steps for a thumbnail.
+	 *
+	 * @var array
+	 */
+	protected $renderingSteps = array(
+		\TYPO3\CMS\Media\Service\Thumbnail::OUTPUT_URI => 'renderUri',
+		\TYPO3\CMS\Media\Service\Thumbnail::OUTPUT_IMAGE => 'renderTagImage',
+		\TYPO3\CMS\Media\Service\Thumbnail::OUTPUT_IMAGE_WRAPPED => 'renderTagAnchor',
+	);
+
+	/**
 	 * Whether the thumbnail should be wrapped with an anchor.
 	 *
 	 * @var bool
+	 * @deprecated will be removed in Media 1.2
 	 */
 	protected $wrap = FALSE;
 
 	/**
 	 * @var \TYPO3\CMS\Core\Resource\File|\TYPO3\CMS\Media\Domain\Model\Asset
 	 */
-	protected $file = FALSE;
+	protected $file;
+
+	/**
+	 * @var \TYPO3\CMS\Core\Resource\ProcessedFile
+	 */
+	protected $processedFile;
 
 	/**
 	 * Define width, height and all sort of attributes to render a thumbnail.
@@ -90,7 +139,7 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 			$thumbnail = $serviceInstance->setFile($this->file)
 				->setConfiguration($this->getConfiguration())
 				->setAttributes($this->getAttributes())
-				->doWrap($this->wrap)
+				->setOutputType($this->getOutputType())
 				->create();
 		} else {
 			$logger = \TYPO3\CMS\Media\Utility\Logger::getInstance($this);
@@ -129,6 +178,7 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 
 	/**
 	 * @return boolean
+	 * @deprecated will be removed in Media 1.2
 	 */
 	public function isWrapped() {
 		return $this->wrap;
@@ -139,9 +189,12 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 	 *
 	 * @param bool $wrap
 	 * @return \TYPO3\CMS\Media\Service\Thumbnail
+	 * @deprecated will be removed in Media 1.2
 	 */
 	public function doWrap($wrap = TRUE) {
-		$this->wrap = $wrap;
+		if ($wrap) {
+			$this->outputType = self::OUTPUT_IMAGE_WRAPPED;
+		}
 		return $this;
 	}
 
@@ -164,6 +217,30 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getConfiguration() {
+		if (empty($this->configuration)) {
+			$dimension = \TYPO3\CMS\Media\Utility\SettingImagePreset::getInstance()->preset('image_thumbnail');
+			$this->configuration = array(
+				'width' => $dimension->getWidth(),
+				'height' => $dimension->getHeight(),
+			);
+		}
+		return $this->configuration;
+	}
+
+	/**
+	 * Return what needs to be rendered
+	 *
+	 * @return array
+	 */
+	public function getRenderingSteps() {
+		$position = array_search($this->getOutputType(), array_keys($this->renderingSteps));
+		return array_slice($this->renderingSteps, 0, $position + 1);
+	}
+
+	/**
 	 * @return mixed
 	 */
 	public function getFile() {
@@ -181,20 +258,6 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 		}
 		$this->file = $file;
 		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getConfiguration() {
-		if (empty($this->configuration)) {
-			$dimension = \TYPO3\CMS\Media\Utility\SettingImagePreset::getInstance()->preset('image_thumbnail');
-			$this->configuration = array(
-				'width' => $dimension->getWidth(),
-				'height' => $dimension->getHeight(),
-			);
-		}
-		return $this->configuration;
 	}
 
 	/**
@@ -219,6 +282,29 @@ class Thumbnail implements \TYPO3\CMS\Media\Service\ThumbnailInterface {
 	 */
 	public function setAttributes($attributes) {
 		$this->attributes = $attributes;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOutputType() {
+		return $this->outputType;
+	}
+
+	/**
+	 * @throws \TYPO3\CMS\Media\Exception\InvalidKeyInArrayException
+	 * @param string $outputType
+	 * @return \TYPO3\CMS\Media\Service\Thumbnail
+	 */
+	public function setOutputType($outputType) {
+		if (!in_array($outputType, $this->allowedOutputTypes)) {
+			throw new \TYPO3\CMS\Media\Exception\InvalidKeyInArrayException(
+				sprintf('Output type "%s" is not allowed', $outputType),
+				1373020076
+			);
+		}
+		$this->outputType = $outputType;
 		return $this;
 	}
 }
