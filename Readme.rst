@@ -11,4 +11,3 @@ Mailing list: http://lists.typo3.org/cgi-bin/mailman/listinfo/typo3-dev Make sur
 
 Documentation is in ``Documentation/Index.rst``
 
-.. _replacement of the DAM: http://buzz.typo3.org/teams/dam/article/new-features-in-dam-13-and-the-future-of-dam/
