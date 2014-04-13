@@ -138,11 +138,12 @@ class ImageThumbnail extends \TYPO3\CMS\Media\Service\ThumbnailService
 			}
 		}
 
-		return sprintf('<a href="%s%s" target="%s" data-uid="%s">%s</a>',
+		return sprintf('<a href="%s%s" target="%s" data-uid="%s" data-url="%s">%s</a>',
 			$this->getAnchorUri() ? $this->getAnchorUri() : $file->getPublicUrl(TRUE),
 			$this->getAppendTimeStamp() && !$this->getAnchorUri() ? '?' . $file->getProperty('tstamp') : '',
 			$this->getTarget(),
 			$file->getUid(),
+			$file->getPublicUrl(),
 			$result
 		);
 	}
